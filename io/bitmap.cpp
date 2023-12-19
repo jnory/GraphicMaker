@@ -13,7 +13,7 @@ int load_file_header(FILE *fp, BitmapFile *file)
         return -1;
     }
 
-    if (strcmp((const char *) file->fileHeader.bfType, "BM") != 0) {
+    if (file->fileHeader.bfType[0] != 'B' || file->fileHeader.bfType[1] != 'M') {
         return -1;
     }
 
@@ -213,7 +213,7 @@ void release_bmp_file(BitmapFile *file)
     }
 
     if(file->palette != NULL) {
-        free(file->data);
+        free(file->palette);
     }
 }
 
@@ -457,6 +457,9 @@ int save_bmp_data(FILE *fp, BitmapFile *file)
     for (size_t i = 0; i < file->dataSize; i+=bytes_per_width) {
         size_t n = fwrite(&file->data[i], sizeof(uint8_t), bytes_per_width, fp);
         if (n < bytes_per_width) {
+            if (pad_zeros != NULL) {
+                free(pad_zeros);
+            }
             return -1;
         }
         if (pad_zeros == NULL) {
@@ -465,11 +468,12 @@ int save_bmp_data(FILE *fp, BitmapFile *file)
 
         n = fwrite(&pad_zeros[0], sizeof(uint8_t), padding, fp);
         if (n < padding) {
+            free(pad_zeros);
             return -1;
         }
     }
 
-    if (pad_zeros != 0) {
+    if (pad_zeros != NULL) {
         free(pad_zeros);
     }
 

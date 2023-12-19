@@ -46,12 +46,28 @@ MyFrame1::MyFrame1( wxWindow* parent, wxWindowID id, const wxString& title, cons
 
 	this->SetSizer( bSizer1 );
 	this->Layout();
+	m_menubar1 = new wxMenuBar( 0 );
+	m_menu1 = new wxMenu();
+	wxMenuItem* m_menuItem1;
+	m_menuItem1 = new wxMenuItem( m_menu1, wxID_ANY, wxString( wxT("開く") ) , wxEmptyString, wxITEM_NORMAL );
+	m_menu1->Append( m_menuItem1 );
+
+	wxMenuItem* m_menuItem2;
+	m_menuItem2 = new wxMenuItem( m_menu1, wxID_ANY, wxString( wxT("保存") ) , wxEmptyString, wxITEM_NORMAL );
+	m_menu1->Append( m_menuItem2 );
+
+	m_menubar1->Append( m_menu1, wxT("ファイル") );
+
+	this->SetMenuBar( m_menubar1 );
+
 
 	this->Centre( wxBOTH );
 
 	// Connect Events
 	m_exit_button->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::OnQuit ), NULL, this );
 	m_generate_button->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( MyFrame1::Generate ), NULL, this );
+	m_menu1->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MyFrame1::OnClickOpen ), this, m_menuItem1->GetId());
+	m_menu1->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( MyFrame1::OnClickSave ), this, m_menuItem2->GetId());
 }
 
 MyFrame1::~MyFrame1()

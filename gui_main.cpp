@@ -1,6 +1,7 @@
 // modified from wxWidgets sample. See COPYING.md for details
 
 #include "wx/wxprec.h"
+#include "wx/wfstream.h"
 
 #ifndef WX_PRECOMP
     #include "wx/wx.h"
@@ -24,6 +25,8 @@ public:
 
     virtual void Generate( wxCommandEvent& event );
     virtual void OnQuit(wxCommandEvent& event);
+    virtual void OnClickOpen( wxCommandEvent& event );
+    virtual void OnClickSave( wxCommandEvent& event );
 };
 
 wxIMPLEMENT_APP(MyApp);
@@ -82,4 +85,56 @@ void MyFrame::Generate( wxCommandEvent& WXUNUSED(event) ) {
     wxBitmapBundle bundle(bitmap);
     this->m_bitmap->SetBitmap(bundle);
     release_bmp_file(&file);
+}
+
+void MyFrame::OnClickOpen( wxCommandEvent& WXUNUSED(event) )
+{
+    if (!this->m_code_textbox->GetValue().IsEmpty()) {
+        auto ans = wxMessageBox("現在のコードは失われます。よろしいですか？", "確認", wxYES_NO, this);
+        if (ans != wxYES) {
+            return;
+        }
+    }
+
+    auto cwd = wxGetCwd();
+    wxFileDialog openDialog(
+            this,
+            "開く",
+            cwd,
+            wxEmptyString,
+            wxFileSelectorDefaultWildcardStr,
+            wxFD_OPEN);
+    if (openDialog.ShowModal() != wxID_OK) {
+        return;
+    }
+
+    auto path = openDialog.GetPath();
+    if(!this->m_code_textbox->LoadFile(path)){
+        wxMessageBox("読み込みに失敗しました。", "エラー", wxCLOSE, this);
+    }
+}
+
+void MyFrame::OnClickSave( wxCommandEvent& WXUNUSED(event) )
+{
+    wxFileDialog saveDialog(
+            this,
+            "保存",
+            wxEmptyString,
+            wxEmptyString,
+            wxFileSelectorDefaultWildcardStr,
+            wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
+    if (saveDialog.ShowModal() != wxID_OK) {
+        return;
+    }
+
+    auto path = saveDialog.GetPath();
+    if(wxFile::Exists(path)){
+        auto ans = wxMessageBox("上書きします。よろしいですか？", "確認", wxYES_NO, this);
+        if (ans != wxYES) {
+            return;
+        }
+    }
+    if(!this->m_code_textbox->SaveFile(path)){
+        wxMessageBox("保存に失敗しました。", "エラー", wxCLOSE, this);
+    }
 }

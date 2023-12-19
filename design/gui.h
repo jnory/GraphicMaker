@@ -21,6 +21,7 @@
 #include <wx/icon.h>
 #include <wx/sizer.h>
 #include <wx/statbmp.h>
+#include <wx/menu.h>
 #include <wx/frame.h>
 
 ///////////////////////////////////////////////////////////////////////////
@@ -38,10 +39,14 @@ class MyFrame1 : public wxFrame
 		wxButton* m_exit_button;
 		wxButton* m_generate_button;
 		wxStaticBitmap* m_bitmap;
+		wxMenuBar* m_menubar1;
+		wxMenu* m_menu1;
 
 		// Virtual event handlers, override them in your derived class
 		virtual void OnQuit( wxCommandEvent& event ) { event.Skip(); }
 		virtual void Generate( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnClickOpen( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnClickSave( wxCommandEvent& event ) { event.Skip(); }
 
 
 	public:

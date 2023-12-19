@@ -1,7 +1,5 @@
 // modified from wxWidgets sample. See COPYING.md for details
 
-#include <fstream>
-
 #include "wx/wxprec.h"
 
 #ifndef WX_PRECOMP
@@ -55,25 +53,19 @@ void MyFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 }
 
 void MyFrame::Generate( wxCommandEvent& event ) {
-    std::ofstream ofs("tmp.txt");
     std::string code = this->m_code_textbox->GetValue().ToStdString();
-    ofs << code << std::endl << std::endl;
 
     BitmapFile file;
     
     wxSize size = this->m_bitmap->GetSize();
-    ofs << size.GetWidth() << " " << size.GetHeight() << std::endl << std::endl;
 
     initialize_bmp_file(&file, size.GetWidth(), size.GetHeight());
-
-    ofs << "Initialized" << std::endl << std::endl;
 
     auto shapes = parse(code);
     for (auto &shape: shapes) {
         shape->draw(&file);
         delete shape;
     }
-    ofs << "Shape built" << std::endl << std::endl;
 
     wxImage image(size);
     for (size_t x = 0; x < size.GetWidth(); x++) {
@@ -85,12 +77,9 @@ void MyFrame::Generate( wxCommandEvent& event ) {
             image.SetRGB(x, y, r, g, b);
         }
     }
-    ofs << "wxImage built" << std::endl << std::endl;
 
     wxBitmap bitmap(image);
-    ofs << "wxBitmap built" << std::endl << std::endl;
     wxBitmapBundle bundle(bitmap);
     this->m_bitmap->SetBitmap(bundle);
-    ofs << "SetBitmap" << std::endl << std::endl;
     release_bmp_file(&file);
 }

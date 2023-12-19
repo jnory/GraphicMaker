@@ -1,7 +1,7 @@
 # modified from wxWidgets sample. See COPYING.md for details
 
 # Declare the minimum required CMake version
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.26)
 
 # Name the project
 project(graphic)
@@ -50,10 +50,10 @@ set(SRC_FILES
     )
 
 if(WIN32)
-    set_source_files_properties(
-        design/gui.cpp
-        PROPERTIES COMPILE_FLAGS /source-charset:utf-8
-    )
+    add_compile_options("/utf-8 /W4")
+    set(CMAKE_DEPFILE_FLAGS_CXX "")
+else()
+    set(CMAKE_CXX_FLAGS "-Wall")
 endif()
 
 # Define the build target for the executable

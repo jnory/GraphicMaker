@@ -14,8 +14,8 @@ Rectangle Rectangle::copy_translate(int diff_x, int diff_y)
 
 Rectangle Rectangle::copy_scale(double scale) 
 {
-    Point p(this->left_bottom.x * scale, this->left_bottom.y * scale);
-    return Rectangle(p, this->width * scale, this->height * scale);
+    Point p((size_t) (this->left_bottom.x * scale), (size_t) (this->left_bottom.y * scale));
+    return Rectangle(p, (size_t)(this->width * scale), (size_t)(this->height * scale));
 }
 
 Shape *Rectangle::copy()
@@ -33,11 +33,9 @@ Shape *Rectangle::translate(int diff_x, int diff_y)
 
 Shape *Rectangle::scale(double scale)
 {
-    this->left_bottom.x *= scale;
-    this->left_bottom.y *= scale;
-    // this->left_bottom.scale(scale);
-    this->width *= scale;
-    this->height *= scale;
+    this->left_bottom.scale(scale);
+    this->width = (size_t)(this->width * scale);
+    this->height = (size_t)(this->height * scale);
 
     return this;
 }
@@ -45,17 +43,17 @@ Shape *Rectangle::scale(double scale)
 Shape *Rectangle::scale(double scale, Point center)
 {
     this->left_bottom.scale(scale, center);
-    this->width *= scale;
-    this->height *= scale;
+    this->width = (size_t)(this->width * scale);
+    this->height = (size_t)(this->height * scale);
 
     return this;
 }
 
 void Rectangle::draw(BitmapFile *file)
 {
-    Point right_bottom = this->left_bottom.copy_translate(this->width, 0);
-    Point left_top = this->left_bottom.copy_translate(0, this->height);
-    Point right_top = this->left_bottom.copy_translate(this->width, this->height);
+    Point right_bottom = this->left_bottom.copy_translate((int)this->width, 0);
+    Point left_top = this->left_bottom.copy_translate(0, (int)this->height);
+    Point right_top = this->left_bottom.copy_translate((int)this->width, (int)this->height);
 
     Line left(this->left_bottom, left_top);
     Line top(left_top,     right_top);

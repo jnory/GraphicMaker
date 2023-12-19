@@ -8,7 +8,8 @@
 void set_pixel(BitmapFile *file, size_t x, size_t y, uint8_t brightness);
 void set_color(BitmapFile *file, size_t x, size_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 
-struct Point : public Shape {
+class Point : public Shape {
+public:
     size_t x;
     size_t y;
 

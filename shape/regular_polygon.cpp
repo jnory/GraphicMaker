@@ -14,11 +14,11 @@ RegularPolygon::RegularPolygon(size_t n, Point center, size_t r)
 
 void RegularPolygon::update()
 {
-    for (int i = 0; i < n; i++) {
+    for (size_t i = 0; i < n; i++) {
         this->points.push_back(
             Point(
-                center.x + r * std::cos(2 * PI * i / n),
-                center.y + r * std::sin(2 * PI * i / n)
+                center.x + (size_t)(r * std::cos(2 * PI * i / n)),
+                center.y + (size_t)(r * std::sin(2 * PI * i / n))
             )
         );
     }
@@ -38,24 +38,24 @@ Shape *RegularPolygon::translate(int diff_x, int diff_y)
 
 Shape *RegularPolygon::scale(double scale)
 {
-    this->r *= scale;
+    this->r = (size_t) (this->r * scale);
     this->center.scale(scale);
     this->update();
     return this;
 }
 
-Shape *RegularPolygon::scale(double scale, Point center)
+Shape *RegularPolygon::scale(double scale, Point center_)
 {
-    this->r *= scale;
-    this->center.scale(scale, center);
+    this->r = (size_t) (this->r * scale);
+    this->center.scale(scale, center_);
     this->update();
     return this;
 }
 
 void RegularPolygon::draw(BitmapFile *file)
 {
-    for (int i = 0; i < this->n; i++) {
-        int j = (i + 1) % this->n;
+    for (size_t i = 0; i < this->n; i++) {
+        size_t j = (i + 1) % this->n;
         Line line(this->points[i], this->points[j]);
         line.draw(file);
     }

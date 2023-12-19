@@ -4,8 +4,8 @@
 EquilateralTriangle::EquilateralTriangle(Point left_bottom, size_t side)
     : Triangle(
         left_bottom, 
-        left_bottom.copy_translate(side, 0), 
-        left_bottom.copy_translate(side / 2, side * 1.73205 / 2)
+        left_bottom.copy_translate((int) side, 0),
+        left_bottom.copy_translate((int)(side / 2), (int)(side * 1.73205 / 2))
     ), left_bottom(left_bottom), side(side), theta(0)
 {}
 
@@ -13,12 +13,12 @@ EquilateralTriangle::EquilateralTriangle(Point left_bottom, size_t side, double 
     : Triangle(
         left_bottom, 
         Point(
-            left_bottom.x + side * std::cos(theta / 360 * 2 * PI),
-            left_bottom.y + side * std::sin(theta / 360 * 2 * PI)
+            left_bottom.x + (size_t)(side * std::cos(theta / 360 * 2 * PI)),
+            left_bottom.y + (size_t)(side * std::sin(theta / 360 * 2 * PI))
         ), 
         Point(
-            left_bottom.x + side * std::cos((theta + 60) / 360 * 2 * PI),
-            left_bottom.y + side * std::sin((theta + 60) / 360 * 2 * PI)
+            left_bottom.x + (size_t)(side * std::cos((theta + 60) / 360 * 2 * PI)),
+            left_bottom.y + (size_t)(side * std::sin((theta + 60) / 360 * 2 * PI))
         ) 
     ), left_bottom(left_bottom), side(side), theta(theta)
 {}

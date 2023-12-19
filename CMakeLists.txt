@@ -50,10 +50,12 @@ set(SRC_FILES
     )
 
 if(WIN32)
-    add_compile_options("/utf-8 /W4")
+    add_compile_options("/source-charset:utf-8")
+    add_compile_options("/W4")
     set(CMAKE_DEPFILE_FLAGS_CXX "")
 else()
-    set(CMAKE_CXX_FLAGS "-Wall")
+    add_compile_options("-Wall")
+    add_compile_options("-Wextra")
 endif()
 
 # Define the build target for the executable

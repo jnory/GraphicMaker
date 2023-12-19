@@ -133,7 +133,7 @@ int load_color_palette(FILE *fp, BitmapFile *file)
     }
     file->nPalette = n_palette;
 
-    for(int i = 0; i < n_palette; i++) {
+    for(int i = 0; i < (int) n_palette; i++) {
         size_t n = fread(&file->palette[i].rgbBlue, sizeof(uint8_t), 1, fp);
         if (n < 1) {
             return -1;
@@ -184,8 +184,8 @@ void initialize_bmp_file(BitmapFile *file, size_t width, size_t height)
     fileHeader->bfOffBits = 54;
     BMP_BITMAPINFOHEADER *infoHeader = &file->infoHeader;
     infoHeader->biSize = 40;
-    infoHeader->biWidth = width;
-    infoHeader->biHeight = height;
+    infoHeader->biWidth = (uint32_t) width;
+    infoHeader->biHeight = (uint32_t) height;
     infoHeader->biPlanes = 1;
     infoHeader->biBitCount = 24;
     infoHeader->biCompression = 0;
@@ -203,7 +203,7 @@ void initialize_bmp_file(BitmapFile *file, size_t width, size_t height)
     memset(file->data, 255, file->dataSize);
 
     OriginalSize osize = calc_original_size(infoHeader);
-    fileHeader->bfSize = 54 + osize.original_size;
+    fileHeader->bfSize = (uint32_t) (54 + osize.original_size);
 }
 
 void release_bmp_file(BitmapFile *file) 
@@ -409,7 +409,7 @@ int save_color_palette(FILE *fp, BitmapFile *file)
         n_palette = 1u << bit_count;
     }
 
-    for(int i = 0; i < n_palette; i++) {
+    for(int i = 0; i < (int) n_palette; i++) {
         size_t n = fwrite(&file->palette[i].rgbBlue, sizeof(uint8_t), 1, fp);
         if (n < 1) {
             return -1;
@@ -434,7 +434,6 @@ int save_bmp_data(FILE *fp, BitmapFile *file)
 {
     BMP_BITMAPINFOHEADER *info = &file->infoHeader;
     size_t width = info->biWidth;
-    size_t height = info->biHeight;
 
     uint16_t bit_per_pixel = info->biBitCount;
     // reference: https://learn.microsoft.com/ja-jp/windows/win32/api/wingdi/ns-wingdi-bitmapinfoheader#-------------

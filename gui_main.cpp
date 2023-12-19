@@ -52,7 +52,7 @@ void MyFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
     Close(true);
 }
 
-void MyFrame::Generate( wxCommandEvent& event ) {
+void MyFrame::Generate( wxCommandEvent& WXUNUSED(event) ) {
     std::string code = this->m_code_textbox->GetValue().ToStdString();
 
     BitmapFile file;
@@ -68,8 +68,8 @@ void MyFrame::Generate( wxCommandEvent& event ) {
     }
 
     wxImage image(size);
-    for (size_t x = 0; x < size.GetWidth(); x++) {
-        for (size_t y = 0; y < size.GetHeight(); y++) {
+    for (int x = 0; x < size.GetWidth(); x++) {
+        for (int y = 0; y < size.GetHeight(); y++) {
             size_t position = (y * size.GetWidth() + x) * 3;
             uint8_t b = file.data[position];
             uint8_t g = file.data[position + 1];

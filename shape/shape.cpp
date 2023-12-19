@@ -3,3 +3,6 @@
 Shape::Shape()
 {
 }
+
+Shape::~Shape() {
+}

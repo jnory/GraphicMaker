@@ -28,13 +28,13 @@ Shape *PngImage::translate(int diff_x, int diff_y)
     return this;
 }
 
-Shape *PngImage::scale(double scale)
+Shape *PngImage::scale(double)
 {
     std::cerr << "PngImage::scale not implemented." << std::endl;
     return this;
 }
 
-Shape *PngImage::scale(double scale, Point center)
+Shape *PngImage::scale(double, Point)
 {
     std::cerr << "PngImage::scale not implemented." << std::endl;
     return this;
@@ -42,8 +42,8 @@ Shape *PngImage::scale(double scale, Point center)
 
 void PngImage::draw(BitmapFile *file)
 {
-    for(int x = 0; x < this->width; x++) {
-        for(int y = 0; y < this->height; y++) {
+    for(size_t x = 0; x < this->width; x++) {
+        for(size_t y = 0; y < this->height; y++) {
             size_t index = (y * this->width + x) * 4;
             size_t to_x = this->left_bottom.x + x;
             size_t to_y = this->left_bottom.y + this->height - y;

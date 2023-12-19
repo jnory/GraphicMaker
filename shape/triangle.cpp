@@ -16,12 +16,12 @@ Triangle Triangle::copy_translate(int diff_x, int diff_y)
 Triangle Triangle::copy_scale(double scale) 
 {
     Point new_p2(
-        (this->p2.x - this->p1.x) * scale + this->p1.x,
-        (this->p2.y - this->p1.y) * scale + this->p1.y
+        (size_t)((this->p2.x - this->p1.x) * scale + this->p1.x),
+        (size_t)((this->p2.y - this->p1.y) * scale + this->p1.y)
     );
     Point new_p3(
-        (this->p3.x - this->p1.x) * scale + this->p1.x,
-        (this->p3.y - this->p1.y) * scale + this->p1.y
+        (size_t)((this->p3.x - this->p1.x) * scale + this->p1.x),
+        (size_t)((this->p3.y - this->p1.y) * scale + this->p1.y)
     );
     return Triangle(this->p1, new_p2, new_p3);
 }

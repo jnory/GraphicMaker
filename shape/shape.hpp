@@ -9,6 +9,7 @@ class Point;
 class Shape {
 public:
     Shape();
+    virtual ~Shape();
 
     virtual Shape *copy() = 0;
     virtual Shape *translate(int diff_x, int diff_y) = 0;

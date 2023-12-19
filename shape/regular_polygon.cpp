@@ -17,8 +17,8 @@ void RegularPolygon::update()
     for (size_t i = 0; i < n; i++) {
         this->points.push_back(
             Point(
-                center.x + (size_t)(r * std::cos(2 * PI * i / n)),
-                center.y + (size_t)(r * std::sin(2 * PI * i / n))
+                (size_t)(center.x + r * std::cos(2 * PI * i / n)),
+                (size_t)(center.y + r * std::sin(2 * PI * i / n))
             )
         );
     }

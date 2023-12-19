@@ -77,7 +77,7 @@ void MyFrame::Generate( wxCommandEvent& WXUNUSED(event) ) {
             uint8_t b = file.data[position];
             uint8_t g = file.data[position + 1];
             uint8_t r = file.data[position + 2];
-            image.SetRGB(x, y, r, g, b);
+            image.SetRGB(x, size.GetHeight() - y - 1, r, g, b);
         }
     }
 

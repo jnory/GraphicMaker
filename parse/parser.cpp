@@ -6,12 +6,13 @@
 #include "parser.hpp"
 #include "../shape/point.hpp"
 #include "../shape/line.hpp"
+#include "../shape/rectangle.hpp"
 #include "../shape/square.hpp"
 #include "../shape/triangle.hpp"
 #include "../shape/equilateral_triangle.hpp"
-#include "../shape/rectangle.hpp"
 #include "../shape/regular_polygon.hpp"
 #include "../shape/png_image.hpp"
+#include "../shape/circle.hpp"
 
 
 std::vector<std::string> split_code(std::string shape_str) 
@@ -178,6 +179,26 @@ Shape *make_regular_polygon_from_text(std::string line)
     return new RegularPolygon(n, Point(center_x, center_y), r);
 }
 
+Shape *make_circle_from_text(std::string line)
+{
+    std::string params = line.substr(6);
+    std::stringstream ss(params);
+
+    size_t center_x;
+    size_t center_y;
+    size_t r;
+
+    ss >> center_x;
+    ss >> center_y;
+    ss >> r;
+    if (ss.fail()) {
+        printf("Parse error: params=%s\n", params.c_str());
+        return NULL;
+    }
+
+    return new Circle(Point(center_x, center_y), r);
+}
+
 
 Shape *make_png_image_from_text(std::string line) 
 {
@@ -219,6 +240,8 @@ Shape *make_shape_from_text(std::string &line)
         return make_rectangle_from_text(line);
     } else if (line.substr(0, 15) == "REGULAR_POLYGON") {
         return make_regular_polygon_from_text(line);
+    } else if (line.substr(0, 6) == "CIRCLE") {
+        return make_circle_from_text(line);
     } else if (line.substr(0, 7) == "LOADPNG") {
         return make_png_image_from_text(line);
     } else {

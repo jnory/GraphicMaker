@@ -45,6 +45,8 @@ set(SRC_FILES
     shape/shape.hpp
     shape/square.hpp
     shape/triangle.hpp
+    shape/circle.hpp
+    shape/circle.cpp
     parse/reader.cpp
     parse/reader.hpp
     )

@@ -5,6 +5,8 @@
 
 #include "shape.hpp"
 
+#define PI 3.14159265
+
 void set_pixel(BitmapFile *file, size_t x, size_t y, uint8_t brightness);
 void set_color(BitmapFile *file, size_t x, size_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
 

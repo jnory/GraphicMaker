@@ -1,14 +1,13 @@
-#ifndef LINE_HPP
-#define LINE_HPP
+#ifndef CIRCLE_HPP
+#define CIRCLE_HPP
 
 #include "../io/bitmap.hpp"
 #include "point.hpp"
 #include "shape.hpp"
 
-class Line: public Shape {
+class Circle: public Shape {
 public:
-    Line(Point p1, Point p2);
-    Line(Point p, size_t length, double theta);
+    Circle(Point center, size_t r);
 
     virtual Shape *copy();
     virtual Shape *translate(int diff_x, int diff_y);
@@ -18,8 +17,8 @@ public:
     virtual void describe(std::ostream *out);
 
 private:
-    Point p1;
-    Point p2;
+    Point center_;
+    size_t r_;
 };
 
-#endif // LINE_HPP
+#endif // CIRCLE_HPP

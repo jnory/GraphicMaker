@@ -141,12 +141,6 @@ void MyFrame::OnClickSave( wxCommandEvent& WXUNUSED(event) )
     }
 
     auto path = saveDialog.GetPath();
-    if(wxFile::Exists(path)){
-        auto ans = wxMessageBox("上書きします。よろしいですか？", "確認", wxYES_NO, this);
-        if (ans != wxYES) {
-            return;
-        }
-    }
     if(!this->m_code_textbox->SaveFile(path)){
         wxMessageBox("保存に失敗しました。", "エラー", wxCLOSE, this);
     }

@@ -47,6 +47,7 @@ class MyFrame1 : public wxFrame
 		virtual void Generate( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnClickOpen( wxCommandEvent& event ) { event.Skip(); }
 		virtual void OnClickSave( wxCommandEvent& event ) { event.Skip(); }
+		virtual void OnClickImageSave( wxCommandEvent& event ) { event.Skip(); }
 
 
 	public:

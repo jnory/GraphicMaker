@@ -22,11 +22,16 @@ class MyFrame : public MyFrame1
 public:
     // ctor(s)
     MyFrame();
+    virtual ~MyFrame();
 
     virtual void Generate( wxCommandEvent& event );
     virtual void OnQuit(wxCommandEvent& event);
     virtual void OnClickOpen( wxCommandEvent& event );
     virtual void OnClickSave( wxCommandEvent& event );
+    virtual void OnClickImageSave( wxCommandEvent& event );
+
+private:
+    BitmapFile *file_;
 };
 
 wxIMPLEMENT_APP(MyApp);
@@ -44,11 +49,18 @@ bool MyApp::OnInit()
 }
 
 MyFrame::MyFrame()
-       : MyFrame1(nullptr)
+       : MyFrame1(nullptr), file_(nullptr)
 {
 }
 
 
+MyFrame::~MyFrame()
+{
+    if (this->file_ != nullptr) {
+        release_bmp_file(this->file_);
+        delete this->file_;
+    }
+}
 
 void MyFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 {
@@ -58,15 +70,17 @@ void MyFrame::OnQuit(wxCommandEvent& WXUNUSED(event))
 void MyFrame::Generate( wxCommandEvent& WXUNUSED(event) ) {
     std::string code = this->m_code_textbox->GetValue().ToStdString();
 
-    BitmapFile file;
-    
+    if(this->file_ != nullptr) {
+        release_bmp_file(file_);
+    }
+    file_ = new BitmapFile();
     wxSize size = this->m_bitmap->GetSize();
 
-    initialize_bmp_file(&file, size.GetWidth(), size.GetHeight());
+    initialize_bmp_file(this->file_, size.GetWidth(), size.GetHeight());
 
     auto shapes = parse(code);
     for (auto &shape: shapes) {
-        shape->draw(&file);
+        shape->draw(this->file_);
         delete shape;
     }
 
@@ -74,9 +88,9 @@ void MyFrame::Generate( wxCommandEvent& WXUNUSED(event) ) {
     for (int x = 0; x < size.GetWidth(); x++) {
         for (int y = 0; y < size.GetHeight(); y++) {
             size_t position = (y * size.GetWidth() + x) * 3;
-            uint8_t b = file.data[position];
-            uint8_t g = file.data[position + 1];
-            uint8_t r = file.data[position + 2];
+            uint8_t b = this->file_->data[position];
+            uint8_t g = this->file_->data[position + 1];
+            uint8_t r = this->file_->data[position + 2];
             image.SetRGB(x, size.GetHeight() - y - 1, r, g, b);
         }
     }
@@ -84,7 +98,6 @@ void MyFrame::Generate( wxCommandEvent& WXUNUSED(event) ) {
     wxBitmap bitmap(image);
     wxBitmapBundle bundle(bitmap);
     this->m_bitmap->SetBitmap(bundle);
-    release_bmp_file(&file);
 }
 
 void MyFrame::OnClickOpen( wxCommandEvent& WXUNUSED(event) )
@@ -137,4 +150,26 @@ void MyFrame::OnClickSave( wxCommandEvent& WXUNUSED(event) )
     if(!this->m_code_textbox->SaveFile(path)){
         wxMessageBox("保存に失敗しました。", "エラー", wxCLOSE, this);
     }
+}
+
+void MyFrame::OnClickImageSave( wxCommandEvent& WXUNUSED(event) )
+{
+    if (this->file_ == nullptr) {
+        wxMessageBox("まだ画像を生成していません。", "エラー", wxOK, this);
+        return;
+    }
+    wxFileDialog saveDialog(
+            this,
+            "保存",
+            wxEmptyString,
+            wxEmptyString,
+            "*.bmp",
+            wxFD_SAVE|wxFD_OVERWRITE_PROMPT);
+    if (saveDialog.ShowModal() != wxID_OK) {
+        return;
+    }
+
+    auto path = saveDialog.GetPath();
+    // TODO: support const char *
+    save_bmp_file((char *)path.ToStdString().c_str(), this->file_);
 }

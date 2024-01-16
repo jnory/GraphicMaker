@@ -72,6 +72,7 @@ void MyFrame::Generate( wxCommandEvent& WXUNUSED(event) ) {
 
     if(this->file_ != nullptr) {
         release_bmp_file(file_);
+        delete file_;
     }
     file_ = new BitmapFile();
     wxSize size = this->m_bitmap->GetSize();

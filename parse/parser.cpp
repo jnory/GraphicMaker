@@ -4,6 +4,7 @@
 #include <iterator>
 
 #include "parser.hpp"
+#include "tokenizer.hpp"
 #include "../shape/point.hpp"
 #include "../shape/line.hpp"
 #include "../shape/rectangle.hpp"
@@ -15,254 +16,176 @@
 #include "../shape/circle.hpp"
 
 
-std::vector<std::string> split_code(const std::string &shape_str)
+Shape *make_point_from_text(const Sentence &s)
 {
-    std::vector<std::string> lines;
-    auto it = std::begin(shape_str);
-    auto end = std::end(shape_str);
-    while(it != end) {
-        auto found = std::find(it, end, '\n');
-        std::string line(it, found);
-        lines.push_back(line);
-        if (found == end) {
-            break;
-        }
-        it = found + 1;
-    }
-
-    return lines;
-}
-
-Shape *make_point_from_text(const std::string& line)
-{
-    std::string params = line.substr(5);
-    std::stringstream ss(params);
-
-    size_t x;
-    size_t y;
-    ss >> x;
-    ss >> y;
-    if (ss.fail()) {
-        printf("Parse error: params=%s\n", params.c_str());
+    auto tokens = s.tokens();
+    try {
+        auto x = tokens[1].get<size_t>();
+        auto y = tokens[2].get<size_t>();
+        return new Point(x, y);
+    } catch (std::runtime_error &) {
+        std::cerr << "Parse error: source =" << s.source() << std::endl;
         return nullptr;
     }
-
-    return new Point(x, y);
 }
 
-Shape *make_line_from_text(const std::string& line)
+Shape *make_line_from_text(const Sentence& s)
 {
-    std::string params = line.substr(4);
-    std::stringstream ss(params);
-
-    size_t x1;
-    size_t y1;
-    size_t x2;
-    size_t y2;
-    ss >> x1;
-    ss >> y1;
-    ss >> x2;
-    ss >> y2;
-    if (ss.fail()) {
-        printf("Parse error: params=%s\n", params.c_str());
+    auto tokens = s.tokens();
+    try {
+        auto x1 = tokens[1].get<size_t>();
+        auto y1 = tokens[2].get<size_t>();
+        auto x2 = tokens[3].get<size_t>();
+        auto y2 = tokens[4].get<size_t>();
+        return new Line(Point(x1, y1), Point(x2, y2));
+    } catch (std::runtime_error &) {
+        std::cerr << "Parse error: source =" << s.source() << std::endl;
         return nullptr;
     }
-
-    return new Line(Point(x1, y1), Point(x2, y2));
 }
 
-Shape *make_square_from_text(const std::string& line)
+Shape *make_square_from_text(const Sentence& s)
 {
-    std::string params = line.substr(6);
-    std::stringstream ss(params);
-
-    size_t x;
-    size_t y;
-    size_t width;
-    ss >> x;
-    ss >> y;
-    ss >> width;
-    if (ss.fail()) {
-        printf("Parse error: params=%s\n", params.c_str());
+    auto tokens = s.tokens();
+    try {
+        auto x = tokens[1].get<size_t>();
+        auto y = tokens[2].get<size_t>();
+        auto width = tokens[3].get<size_t>();
+        return new Square(Point(x, y), width);
+    } catch (std::runtime_error &) {
+        std::cerr << "Parse error: source =" << s.source() << std::endl;
         return nullptr;
     }
-
-    return new Square(Point(x, y), width);
 }
 
-Shape *make_triangle_from_text(const std::string& line)
+Shape *make_triangle_from_text(const Sentence& s)
 {
-    std::string params = line.substr(9);
-    std::stringstream ss(params);
-
-    size_t x1;
-    size_t y1;
-    size_t x2;
-    size_t y2;
-    size_t x3;
-    size_t y3;
-    ss >> x1;
-    ss >> y1;
-    ss >> x2;
-    ss >> y2;
-    ss >> x3;
-    ss >> y3;
-    if (ss.fail()) {
-        printf("Parse error: params=%s\n", params.c_str());
+    auto tokens = s.tokens();
+    try {
+        auto x1 = tokens[1].get<size_t>();
+        auto y1 = tokens[2].get<size_t>();
+        auto x2 = tokens[3].get<size_t>();
+        auto y2 = tokens[4].get<size_t>();
+        auto x3 = tokens[5].get<size_t>();
+        auto y3 = tokens[6].get<size_t>();
+        return new Triangle(Point(x1, y1), Point(x2, y2), Point(x3, y3));
+    } catch (std::runtime_error &) {
+        std::cerr << "Parse error: source =" << s.source() << std::endl;
         return nullptr;
     }
-
-    return new Triangle(Point(x1, y1), Point(x2, y2), Point(x3, y3));
 }
 
-Shape *make_equilateral_triangle_from_text(const std::string& line)
+Shape *make_equilateral_triangle_from_text(const Sentence& s)
 {
-    std::string params = line.substr(20);
-    std::stringstream ss(params);
-
-    size_t x;
-    size_t y;
-    size_t side;
-    double theta;
-    ss >> x;
-    ss >> y;
-    ss >> side;
-    ss >> theta;
-    if (ss.fail()) {
-        printf("Parse error: params=%s\n", params.c_str());
+    auto tokens = s.tokens();
+    try {
+        auto x = tokens[1].get<size_t>();
+        auto y = tokens[2].get<size_t>();
+        auto side = tokens[3].get<size_t>();
+        auto theta = tokens[4].get<double>();
+        return new EquilateralTriangle(Point(x, y), side, theta);
+    } catch (std::runtime_error &) {
+        std::cerr << "Parse error: source =" << s.source() << std::endl;
         return nullptr;
     }
-
-    return new EquilateralTriangle(Point(x, y), side, theta);
 }
 
-Shape *make_rectangle_from_text(const std::string& line)
+Shape *make_rectangle_from_text(const Sentence& s)
 {
-    std::string params = line.substr(9);
-    std::stringstream ss(params);
-
-    size_t left_bottom_x;
-    size_t left_bottom_y;
-    size_t width;
-    size_t height;
-    ss >> left_bottom_x;
-    ss >> left_bottom_y;
-    ss >> width;
-    ss >> height;
-    if (ss.fail()) {
-        printf("Parse error: params=%s\n", params.c_str());
+    auto tokens = s.tokens();
+    try {
+        auto left_bottom_x = tokens[1].get<size_t>();
+        auto left_bottom_y = tokens[2].get<size_t>();
+        auto width = tokens[3].get<size_t>();
+        auto height = tokens[4].get<size_t>();
+        return new Rectangle(Point(left_bottom_x, left_bottom_y), width, height);
+    } catch (std::runtime_error &) {
+        std::cerr << "Parse error: source =" << s.source() << std::endl;
         return nullptr;
     }
-
-    return new Rectangle(Point(left_bottom_x, left_bottom_y), width, height);
 }
 
-Shape *make_regular_polygon_from_text(const std::string& line)
+Shape *make_regular_polygon_from_text(const Sentence& s)
 {
-    std::string params = line.substr(15);
-    std::stringstream ss(params);
-
-    size_t n;
-    size_t center_x;
-    size_t center_y;
-    size_t r;
-
-    ss >> n;
-    ss >> center_x;
-    ss >> center_y;
-    ss >> r;
-    if (ss.fail()) {
-        printf("Parse error: params=%s\n", params.c_str());
+    auto tokens = s.tokens();
+    try {
+        auto n = tokens[1].get<size_t>();
+        auto center_x = tokens[2].get<size_t>();
+        auto center_y = tokens[3].get<size_t>();
+        auto r = tokens[4].get<size_t>();
+        return new RegularPolygon(n, Point(center_x, center_y), r);
+    } catch (std::runtime_error &) {
+        std::cerr << "Parse error: source =" << s.source() << std::endl;
         return nullptr;
     }
-
-    return new RegularPolygon(n, Point(center_x, center_y), r);
 }
 
-Shape *make_circle_from_text(const std::string& line)
+Shape *make_circle_from_text(const Sentence& s)
 {
-    std::string params = line.substr(6);
-    std::stringstream ss(params);
-
-    size_t center_x;
-    size_t center_y;
-    size_t r;
-
-    ss >> center_x;
-    ss >> center_y;
-    ss >> r;
-    if (ss.fail()) {
-        printf("Parse error: params=%s\n", params.c_str());
+    auto tokens = s.tokens();
+    try {
+        auto center_x = tokens[1].get<size_t>();
+        auto center_y = tokens[2].get<size_t>();
+        auto r = tokens[3].get<size_t>();
+        return new Circle(Point(center_x, center_y), r);
+    } catch (std::runtime_error &) {
+        std::cerr << "Parse error: source =" << s.source() << std::endl;
         return nullptr;
     }
-
-    return new Circle(Point(center_x, center_y), r);
 }
 
 
-Shape *make_png_image_from_text(const std::string& line)
+Shape *make_png_image_from_text(const Sentence& s)
 {
-    std::string params = line.substr(7);
-    std::stringstream ss(params);
-
-    std::string path;
-    size_t x;
-    size_t y;
-
-    ss >> path;
-    ss >> x;
-    ss >> y;
-    if (ss.fail()) {
-        printf("Parse error: params=%s\n", params.c_str());
+    auto tokens = s.tokens();
+    try {
+        auto path = tokens[1].get<std::string>();
+        auto x = tokens[2].get<size_t>();
+        auto y = tokens[3].get<size_t>();
+        return new PngImage(path, Point(x, y));
+    } catch (std::runtime_error &) {
+        std::cerr << "Parse error: source =" << s.source() << std::endl;
         return nullptr;
     }
-
-    return new PngImage(path, Point(x, y));
 }
 
-Shape *make_shape_from_text(const std::string &line)
+Shape *make_shape_from_text(const Sentence &s)
 {
-    if(line.size() == 0) {
-        return nullptr;
-    }
-
-    if (line.substr(0, 5) == "POINT") {
-        return make_point_from_text(line);
-    } else if (line.substr(0, 4) == "LINE") {
-        return make_line_from_text(line);
-    } else if (line.substr(0, 6) == "SQUARE") {
-        return make_square_from_text(line);
-    } else if (line.substr(0, 8) == "TRIANGLE") {
-        return make_triangle_from_text(line);
-    } else if (line.substr(0, 20) == "EQUILATERAL_TRIANGLE") {
-        return make_equilateral_triangle_from_text(line);
-    } else if (line.substr(0, 9) == "RECTANGLE") {
-        return make_rectangle_from_text(line);
-    } else if (line.substr(0, 15) == "REGULAR_POLYGON") {
-        return make_regular_polygon_from_text(line);
-    } else if (line.substr(0, 6) == "CIRCLE") {
-        return make_circle_from_text(line);
-    } else if (line.substr(0, 7) == "LOADPNG") {
-        return make_png_image_from_text(line);
+    auto &tokens = s.tokens();
+    auto first = tokens[0].get<std::string>();
+    if (first == "POINT") {
+        return make_point_from_text(s);
+    } else if (first == "LINE") {
+        return make_line_from_text(s);
+    } else if (first == "SQUARE") {
+        return make_square_from_text(s);
+    } else if (first == "TRIANGLE") {
+        return make_triangle_from_text(s);
+    } else if (first == "EQUILATERAL_TRIANGLE") {
+        return make_equilateral_triangle_from_text(s);
+    } else if (first == "RECTANGLE") {
+        return make_rectangle_from_text(s);
+    } else if (first == "REGULAR_POLYGON") {
+        return make_regular_polygon_from_text(s);
+    } else if (first == "CIRCLE") {
+        return make_circle_from_text(s);
+    } else if (first == "LOADPNG") {
+        return make_png_image_from_text(s);
     } else {
-        printf("Unsupported: line=%s\n", line.c_str());
+        std::cerr << "Unsupported: source=" << s.source() << std::endl;
         return nullptr;
     }
 }
 
 std::vector<Shape *> parse(const std::string &shape_str)
 {
-    // ここで文字列を解釈してShape型データを作り、配列にまとめて返します。
-    std::vector<std::string> lines = split_code(shape_str);
-
-
+    auto sentences = tokenize(shape_str);
     std::vector<Shape *> shapes;
-    for(std::string &line: lines) {
-        auto s = make_shape_from_text(line);
+    for(auto &sentence: sentences) {
+        auto s = make_shape_from_text(sentence);
         if (s != nullptr) {
             shapes.push_back(s);
         }
     }
-
     return shapes;
 }

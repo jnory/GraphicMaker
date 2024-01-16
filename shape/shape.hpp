@@ -3,10 +3,11 @@
 
 #include <iostream>
 #include "../io/bitmap.hpp"
+#include "../controls/commands.hpp"
 
 class Point;
 
-class Shape {
+class Shape: public Command {
 public:
     Shape();
     virtual ~Shape();
@@ -18,6 +19,10 @@ public:
     virtual void draw(BitmapFile *file) = 0;
     virtual void describe(std::ostream *out) {
         *out << "Not Implemented" << std::endl;
+    }
+
+    virtual void run(Environment &env) {
+        this->draw(env.get_file());
     }
 };
 

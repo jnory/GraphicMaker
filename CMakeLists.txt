@@ -47,9 +47,11 @@ set(SRC_FILES
     shape/triangle.hpp
     shape/circle.hpp
     shape/circle.cpp
-    parse/reader.cpp
-    parse/reader.hpp
-    )
+        parse/tokenizer.cpp
+        parse/tokenizer.hpp
+        controls/commands.hpp
+        controls/environment.hpp
+)
 
 if(WIN32)
     add_compile_options("/source-charset:utf-8")

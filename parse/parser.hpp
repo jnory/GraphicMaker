@@ -5,8 +5,8 @@
 #include <vector>
 
 #include "../shape/shape.hpp"
+#include "tokenizer.hpp"
 
 std::vector<Shape *> parse(const std::string &shape_str);
-Shape *make_shape_from_text(const std::string &line);
 
 #endif // PARSER_HPP

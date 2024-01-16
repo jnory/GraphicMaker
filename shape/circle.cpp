@@ -25,7 +25,7 @@ void xiaolin_wus_algorithm_circle(
     size_t sq_error = 0;
     for (size_t y = 0; y <= x; y++) {
         auto brightness = 255 - (uint8_t)(255 * ((double)sq_error / (2.0 * (double)r)));
-        std::cout << "x = " << x << " y = " << y << " sq_error = " << sq_error << " brightness = " << (int)brightness << std::endl;
+        // std::cout << "x = " << x << " y = " << y << " sq_error = " << sq_error << " brightness = " << (int)brightness << std::endl;
 
         // low angle
         set_pixel_safe(file, center_x + x, 0, center_y + y, 0, brightness);

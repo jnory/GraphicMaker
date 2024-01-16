@@ -115,7 +115,7 @@ int load_color_palette(FILE *fp, BitmapFile *file)
     uint16_t bit_count = file->infoHeader.biBitCount;
     if (24 <= bit_count && bit_count <= 32) {
         // 未圧縮を仮定している
-        file->palette = NULL;
+        file->palette = nullptr;
         file->nPalette = 0;
         return 0;
     } else if (32 <= bit_count) {
@@ -128,7 +128,7 @@ int load_color_palette(FILE *fp, BitmapFile *file)
     }
 
     file->palette = (BMP_COLOR *)malloc(sizeof(BMP_COLOR) * n_palette);
-    if (file->palette == NULL) {
+    if (file->palette == nullptr) {
         return -1;
     }
     file->nPalette = n_palette;
@@ -208,11 +208,11 @@ void initialize_bmp_file(BitmapFile *file, size_t width, size_t height)
 
 void release_bmp_file(BitmapFile *file) 
 {
-    if(file->data != NULL) {
+    if(file->data != nullptr) {
         free(file->data);
     }
 
-    if(file->palette != NULL) {
+    if(file->palette != nullptr) {
         free(file->palette);
     }
 }
@@ -236,7 +236,7 @@ int load_bmp_data(FILE *fp, BitmapFile *file)
 
     OriginalSize osize = calc_original_size(info);
     uint8_t *data = (uint8_t *) malloc(sizeof(uint8_t) * osize.original_size);
-    if (data == NULL) {
+    if (data == nullptr) {
         return -1;
     }
     size_t n = fread(data, 1, osize.original_size, fp);
@@ -264,13 +264,13 @@ int load_bmp_data(FILE *fp, BitmapFile *file)
 int load_bmp_file(char *path, BitmapFile *file)
 {
     FILE *fp = fopen(path, "rb");
-    if (fp == NULL) {
+    if (fp == nullptr) {
         return -1;
     }
 
     // preset for detection to free memory on error
-    file->data = NULL;
-    file->palette = NULL;
+    file->data = nullptr;
+    file->palette = nullptr;
 
     if (load_file_header(fp, file) < 0) {
         fclose(fp);
@@ -447,7 +447,7 @@ int save_bmp_data(FILE *fp, BitmapFile *file)
     size_t bytes_per_width = width * bit_per_pixel / 8;
     assert(file->dataSize % bytes_per_width == 0);
 
-    uint8_t *pad_zeros = NULL;
+    uint8_t *pad_zeros = nullptr;
     if(padding > 0) {
         pad_zeros = (uint8_t *) malloc(sizeof(uint8_t) * padding);
         memset(&pad_zeros[0], 0, sizeof(uint8_t) * padding);
@@ -456,12 +456,12 @@ int save_bmp_data(FILE *fp, BitmapFile *file)
     for (size_t i = 0; i < file->dataSize; i+=bytes_per_width) {
         size_t n = fwrite(&file->data[i], sizeof(uint8_t), bytes_per_width, fp);
         if (n < bytes_per_width) {
-            if (pad_zeros != NULL) {
+            if (pad_zeros != nullptr) {
                 free(pad_zeros);
             }
             return -1;
         }
-        if (pad_zeros == NULL) {
+        if (pad_zeros == nullptr) {
             continue;
         }
 
@@ -472,7 +472,7 @@ int save_bmp_data(FILE *fp, BitmapFile *file)
         }
     }
 
-    if (pad_zeros != NULL) {
+    if (pad_zeros != nullptr) {
         free(pad_zeros);
     }
 
@@ -482,7 +482,7 @@ int save_bmp_data(FILE *fp, BitmapFile *file)
 int save_bmp_file(char *path, BitmapFile *file)
 {
     FILE *fp = fopen(path, "wb");
-    if (fp == NULL) {
+    if (fp == nullptr) {
         return -1;
     }
 

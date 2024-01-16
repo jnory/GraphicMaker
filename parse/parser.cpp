@@ -44,7 +44,7 @@ Shape *make_point_from_text(std::string line)
     ss >> y;
     if (ss.fail()) {
         printf("Parse error: params=%s\n", params.c_str());
-        return NULL;
+        return nullptr;
     }
 
     return new Point(x, y);
@@ -65,7 +65,7 @@ Shape *make_line_from_text(std::string line)
     ss >> y2;
     if (ss.fail()) {
         printf("Parse error: params=%s\n", params.c_str());
-        return NULL;
+        return nullptr;
     }
 
     return new Line(Point(x1, y1), Point(x2, y2));
@@ -84,7 +84,7 @@ Shape *make_square_from_text(std::string line)
     ss >> width;
     if (ss.fail()) {
         printf("Parse error: params=%s\n", params.c_str());
-        return NULL;
+        return nullptr;
     }
 
     return new Square(Point(x, y), width);
@@ -109,7 +109,7 @@ Shape *make_triangle_from_text(std::string line)
     ss >> y3;
     if (ss.fail()) {
         printf("Parse error: params=%s\n", params.c_str());
-        return NULL;
+        return nullptr;
     }
 
     return new Triangle(Point(x1, y1), Point(x2, y2), Point(x3, y3));
@@ -130,7 +130,7 @@ Shape *make_equilateral_triangle_from_text(std::string line)
     ss >> theta;
     if (ss.fail()) {
         printf("Parse error: params=%s\n", params.c_str());
-        return NULL;
+        return nullptr;
     }
 
     return new EquilateralTriangle(Point(x, y), side, theta);
@@ -151,7 +151,7 @@ Shape *make_rectangle_from_text(std::string line)
     ss >> height;
     if (ss.fail()) {
         printf("Parse error: params=%s\n", params.c_str());
-        return NULL;
+        return nullptr;
     }
 
     return new Rectangle(Point(left_bottom_x, left_bottom_y), width, height);
@@ -173,7 +173,7 @@ Shape *make_regular_polygon_from_text(std::string line)
     ss >> r;
     if (ss.fail()) {
         printf("Parse error: params=%s\n", params.c_str());
-        return NULL;
+        return nullptr;
     }
 
     return new RegularPolygon(n, Point(center_x, center_y), r);
@@ -193,7 +193,7 @@ Shape *make_circle_from_text(std::string line)
     ss >> r;
     if (ss.fail()) {
         printf("Parse error: params=%s\n", params.c_str());
-        return NULL;
+        return nullptr;
     }
 
     return new Circle(Point(center_x, center_y), r);
@@ -214,7 +214,7 @@ Shape *make_png_image_from_text(std::string line)
     ss >> y;
     if (ss.fail()) {
         printf("Parse error: params=%s\n", params.c_str());
-        return NULL;
+        return nullptr;
     }
 
     return new PngImage(path, Point(x, y));
@@ -223,7 +223,7 @@ Shape *make_png_image_from_text(std::string line)
 Shape *make_shape_from_text(std::string &line)
 {
     if(line.size() == 0) {
-        return NULL;
+        return nullptr;
     }
 
     if (line.substr(0, 5) == "POINT") {
@@ -246,7 +246,7 @@ Shape *make_shape_from_text(std::string &line)
         return make_png_image_from_text(line);
     } else {
         printf("Unsupported: line=%s\n", line.c_str());
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -260,7 +260,7 @@ std::vector<Shape *> parse(std::string shape_str)
     std::vector<Shape *> shapes;
     for(std::string &line: lines) {
         auto s = make_shape_from_text(line);
-        if (s != NULL) {
+        if (s != nullptr) {
             shapes.push_back(s);
         }
     }

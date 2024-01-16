@@ -15,7 +15,7 @@
 #include "../shape/circle.hpp"
 
 
-std::vector<std::string> split_code(std::string shape_str) 
+std::vector<std::string> split_code(const std::string &shape_str)
 {
     std::vector<std::string> lines;
     auto it = std::begin(shape_str);
@@ -33,7 +33,7 @@ std::vector<std::string> split_code(std::string shape_str)
     return lines;
 }
 
-Shape *make_point_from_text(std::string line) 
+Shape *make_point_from_text(const std::string& line)
 {
     std::string params = line.substr(5);
     std::stringstream ss(params);
@@ -50,7 +50,7 @@ Shape *make_point_from_text(std::string line)
     return new Point(x, y);
 }
 
-Shape *make_line_from_text(std::string line) 
+Shape *make_line_from_text(const std::string& line)
 {
     std::string params = line.substr(4);
     std::stringstream ss(params);
@@ -71,7 +71,7 @@ Shape *make_line_from_text(std::string line)
     return new Line(Point(x1, y1), Point(x2, y2));
 }
 
-Shape *make_square_from_text(std::string line) 
+Shape *make_square_from_text(const std::string& line)
 {
     std::string params = line.substr(6);
     std::stringstream ss(params);
@@ -90,7 +90,7 @@ Shape *make_square_from_text(std::string line)
     return new Square(Point(x, y), width);
 }
 
-Shape *make_triangle_from_text(std::string line) 
+Shape *make_triangle_from_text(const std::string& line)
 {
     std::string params = line.substr(9);
     std::stringstream ss(params);
@@ -115,7 +115,7 @@ Shape *make_triangle_from_text(std::string line)
     return new Triangle(Point(x1, y1), Point(x2, y2), Point(x3, y3));
 }
 
-Shape *make_equilateral_triangle_from_text(std::string line) 
+Shape *make_equilateral_triangle_from_text(const std::string& line)
 {
     std::string params = line.substr(20);
     std::stringstream ss(params);
@@ -136,7 +136,7 @@ Shape *make_equilateral_triangle_from_text(std::string line)
     return new EquilateralTriangle(Point(x, y), side, theta);
 }
 
-Shape *make_rectangle_from_text(std::string line) 
+Shape *make_rectangle_from_text(const std::string& line)
 {
     std::string params = line.substr(9);
     std::stringstream ss(params);
@@ -157,7 +157,7 @@ Shape *make_rectangle_from_text(std::string line)
     return new Rectangle(Point(left_bottom_x, left_bottom_y), width, height);
 }
 
-Shape *make_regular_polygon_from_text(std::string line) 
+Shape *make_regular_polygon_from_text(const std::string& line)
 {
     std::string params = line.substr(15);
     std::stringstream ss(params);
@@ -179,7 +179,7 @@ Shape *make_regular_polygon_from_text(std::string line)
     return new RegularPolygon(n, Point(center_x, center_y), r);
 }
 
-Shape *make_circle_from_text(std::string line)
+Shape *make_circle_from_text(const std::string& line)
 {
     std::string params = line.substr(6);
     std::stringstream ss(params);
@@ -200,7 +200,7 @@ Shape *make_circle_from_text(std::string line)
 }
 
 
-Shape *make_png_image_from_text(std::string line) 
+Shape *make_png_image_from_text(const std::string& line)
 {
     std::string params = line.substr(7);
     std::stringstream ss(params);
@@ -220,7 +220,7 @@ Shape *make_png_image_from_text(std::string line)
     return new PngImage(path, Point(x, y));
 }
 
-Shape *make_shape_from_text(std::string &line)
+Shape *make_shape_from_text(const std::string &line)
 {
     if(line.size() == 0) {
         return nullptr;
@@ -250,13 +250,12 @@ Shape *make_shape_from_text(std::string &line)
     }
 }
 
-std::vector<Shape *> parse(std::string shape_str)
+std::vector<Shape *> parse(const std::string &shape_str)
 {
     // ここで文字列を解釈してShape型データを作り、配列にまとめて返します。
-    std::vector<std::string> lines;
-    lines = split_code(shape_str);
+    std::vector<std::string> lines = split_code(shape_str);
 
-    
+
     std::vector<Shape *> shapes;
     for(std::string &line: lines) {
         auto s = make_shape_from_text(line);

@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include "../io/bitmap.hpp"
-#include "../controls/commands.hpp"
+#include "../parse/commands.hpp"
 
 class Point;
 

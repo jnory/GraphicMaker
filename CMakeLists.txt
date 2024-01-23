@@ -49,8 +49,9 @@ set(SRC_FILES
     shape/circle.cpp
         parse/tokenizer.cpp
         parse/tokenizer.hpp
-        controls/commands.hpp
-        controls/environment.hpp
+        parse/commands.hpp
+        parse/environment.hpp
+        parse/commands.cpp
 )
 
 if(WIN32)

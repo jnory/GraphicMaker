@@ -24,28 +24,28 @@ void xiaolin_wus_algorithm_circle(
     size_t x = r;
     size_t sq_error = 0;
     for (size_t y = 0; y <= x; y++) {
-        auto brightness = 255 - (uint8_t)(255 * ((double)sq_error / (2.0 * (double)r)));
+        auto brightness = (uint8_t)(255 * ((double)sq_error / (2.0 * (double)r)));
         // std::cout << "x = " << x << " y = " << y << " sq_error = " << sq_error << " brightness = " << (int)brightness << std::endl;
 
         // low angle
-        set_pixel_safe(file, center_x + x, 0, center_y + y, 0, brightness);
-        set_pixel_safe(file, center_x + x, 1, center_y + y, 0, 255 - brightness);
-        set_pixel_safe(file, center_x + x, 0, center_y    , y, brightness);
-        set_pixel_safe(file, center_x + x, 1, center_y    , y, 255 - brightness);
-        set_pixel_safe(file, center_x,     x, center_y + y, 0, brightness);
-        set_pixel_safe(file, center_x + 1, x, center_y + y, 0, 255 - brightness);
-        set_pixel_safe(file, center_x,     x, center_y    , y, brightness);
-        set_pixel_safe(file, center_x + 1, x, center_y    , y, 255 - brightness);
+        set_pixel_safe(file, center_x + x,     0,     center_y + y, 0, brightness);
+        set_pixel_safe(file, center_x + x + 1, 0,     center_y + y, 0, 255 - brightness);
+        set_pixel_safe(file, center_x + x,     0,     center_y,     y, brightness);
+        set_pixel_safe(file, center_x + x + 1, 0,     center_y,     y, 255 - brightness);
+        set_pixel_safe(file, center_x,         x,     center_y + y, 0, brightness);
+        set_pixel_safe(file, center_x,         x + 1, center_y + y, 0, 255 - brightness);
+        set_pixel_safe(file, center_x,         x    , center_y,     y, brightness);
+        set_pixel_safe(file, center_x        , x + 1, center_y,     y, 255 - brightness);
 
         // high angle
-        set_pixel_safe(file, center_x + y, 0, center_y + x, 0, brightness);
-        set_pixel_safe(file, center_x + y, 0, center_y + x, 1, 255 - brightness);
-        set_pixel_safe(file, center_x + y, 0, center_y    , x, brightness);
-        set_pixel_safe(file, center_x + y, 0, center_y + 1, x, 255 - brightness);
-        set_pixel_safe(file, center_x    , y, center_y + x, 0, brightness);
-        set_pixel_safe(file, center_x    , y, center_y + x, 1, 255 - brightness);
-        set_pixel_safe(file, center_x    , y, center_y    , x, brightness);
-        set_pixel_safe(file, center_x    , y, center_y + 1, x, 255 - brightness);
+        set_pixel_safe(file, center_x + y, 0, center_y + x,     0,     brightness);
+        set_pixel_safe(file, center_x + y, 0, center_y + x + 1, 0,     255 - brightness);
+        set_pixel_safe(file, center_x,     y, center_y + x,     0,     brightness);
+        set_pixel_safe(file, center_x,     y, center_y + x + 1, 0,     255 - brightness);
+        set_pixel_safe(file, center_x + y, 0, center_y,         x,     brightness);
+        set_pixel_safe(file, center_x + y, 0, center_y,         x + 1, 255 - brightness);
+        set_pixel_safe(file, center_x,     y, center_y        , x,     brightness);
+        set_pixel_safe(file, center_x,     y, center_y,         x + 1, 255 - brightness);
 
         size_t diff = 2 * y + 1;
         if (sq_error < diff) {

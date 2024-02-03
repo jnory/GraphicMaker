@@ -1,6 +1,6 @@
 #include <sstream>
 
-#include "tokenizer.hpp"
+#include "lexer.hpp"
 
 const Token TokenIterator::eos_ = Token("EOS", true);
 
@@ -78,7 +78,7 @@ Sentence::Sentence(const std::string &line): line_(line) {
     }
 }
 
-std::vector<Sentence> tokenize(const std::string &code){
+std::vector<Sentence> lex(const std::string &code){
     auto lines = split_code(code);
     std::vector<Sentence> sentences;
     sentences.reserve(lines.size());

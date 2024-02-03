@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "../shape/shape.hpp"
-#include "tokenizer.hpp"
+#include "lexer.hpp"
 #include "commands.hpp"
 
 Block *parse(const std::string &shape_str);

@@ -4,7 +4,7 @@
 #include <cassert>
 
 #include "parser.hpp"
-#include "tokenizer.hpp"
+#include "lexer.hpp"
 #include "commands.hpp"
 #include "statement.hpp"
 #include "shape_def.hpp"
@@ -125,7 +125,7 @@ Block *build_block(TokenIterator &iterator, bool &end_by_closed_paren) {
 
 Block *parse(const std::string &shape_str)
 {
-    auto sentences = tokenize(shape_str);
+    auto sentences = lex(shape_str);
     TokenIterator iterator(std::move(sentences));
     bool end_by_closed_paren;
     auto block = build_block(iterator, end_by_closed_paren);

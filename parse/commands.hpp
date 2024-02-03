@@ -2,7 +2,7 @@
 #define COMMANDS_HPP
 
 #include "environment.hpp"
-#include "tokenizer.hpp"
+#include "lexer.hpp"
 
 
 class Command {

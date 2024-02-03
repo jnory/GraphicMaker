@@ -1,5 +1,5 @@
-#ifndef TOKENIZER_HPP
-#define TOKENIZER_HPP
+#ifndef LEXER_HPP
+#define LEXER_HPP
 
 
 #include <utility>
@@ -91,6 +91,6 @@ private:
 };
 
 std::vector<std::string> split_code(const std::string &shape_str);
-std::vector<Sentence> tokenize(const std::string &code);
+std::vector<Sentence> lex(const std::string &code);
 
-#endif // TOKENIZER_HPP
+#endif // LEXER_HPP

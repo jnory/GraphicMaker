@@ -47,8 +47,8 @@ set(SRC_FILES
     shape/triangle.hpp
     shape/circle.hpp
     shape/circle.cpp
-        parse/tokenizer.cpp
-        parse/tokenizer.hpp
+        parse/lexer.cpp
+        parse/lexer.hpp
         parse/commands.hpp
         parse/environment.hpp
         parse/commands.cpp

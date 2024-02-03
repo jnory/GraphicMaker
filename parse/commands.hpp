@@ -66,7 +66,7 @@ private:
 
 class Block: public Command {
 public:
-    explicit Block(std::vector<Command *> &commands): commands_(commands){}
+    explicit Block(std::vector<Command *> commands): commands_(std::move(commands)){}
 
     virtual ~Block() {
         for(auto &cmd: this->commands_) {
@@ -119,6 +119,14 @@ public:
     ShapeDef(std::string type, const std::vector<NoOp *> &parameters);
 
     virtual void run(Environment &env);
+
+    void debug_print() const {
+        std::cerr << "type_=" << type_ << " ||| ";
+        for (auto param: parameters_) {
+            std::cerr << param->get_name() << " ||| ";
+        }
+        std::cerr << "<EOS>" << std::endl;
+    }
 
 private:
     const std::string type_;

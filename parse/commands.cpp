@@ -12,7 +12,7 @@ Immediate NoOp::get_value(Environment &env) {
     std::string token_str = this->token_.get<std::string>();
     char first_letter = token_str[0];
     if ('0' <= first_letter && first_letter <= '9') {
-        return {this->token_.get<int>()};
+        return Immediate(this->token_.get<int>());
     } else {
         assert(first_letter != '"');
         return env.lookup_variable(token_str);
@@ -45,24 +45,24 @@ Immediate BinaryOp::get_value(Environment &env) {
 
     auto v1 = s1_->get_value(env);
     if (this->op_ == "*") {
-        return {v1.get<int>() * v2.get<int>()};
+        return Immediate(v1.get<int>() * v2.get<int>());
     } else if (this->op_ == "/") {
-            return {v1.get<int>() / v2.get<int>()};
+        return Immediate(v1.get<int>() / v2.get<int>());
     } else if (this->op_ == "+") {
-        return {v1.get<int>() + v2.get<int>()};
+        return Immediate(v1.get<int>() + v2.get<int>());
     } else if (this->op_ == "-") {
-        return {v1.get<int>() - v2.get<int>()};
+        return Immediate(v1.get<int>() - v2.get<int>());
     } else if (this->op_ == "<") {
-        return {v1.get<int>() < v2.get<int>()};
+        return Immediate(v1.get<int>() < v2.get<int>());
     } else if (this->op_ == ">") {
-        return {v1.get<int>() > v2.get<int>()};
+        return Immediate(v1.get<int>() > v2.get<int>());
     } else if (this->op_ == "<=") {
-        return {v1.get<int>() <= v2.get<int>()};
+        return Immediate(v1.get<int>() <= v2.get<int>());
     } else if (this->op_ == ">=") {
-        return {v1.get<int>() >= v2.get<int>()};
+        return Immediate(v1.get<int>() >= v2.get<int>());
     } else {
         assert(this->op_ == "==");
-        return {v1.get<int>() == v2.get<int>()};
+        return Immediate(v1.get<int>() == v2.get<int>());
     }
 }
 

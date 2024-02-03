@@ -2,7 +2,7 @@
 
 #include "lexer.hpp"
 
-const Token TokenIterator::eos_ = Token("EOS", true);
+const Token TokenIterator::eos_ = Token("<EOS>", true);
 
 
 std::vector<std::string> split_code(const std::string &shape_str)
@@ -42,33 +42,36 @@ Sentence::Sentence(const std::string &line): line_(line) {
                 found = true;
             }
             is_previous_operator = true;
-            is_previous_space = false;
         } else if (c == '(' || c == ')' || c == '{' || c == '}') {
             found = true;
             force_found = true;
             is_previous_operator = false;
-            is_previous_space = false;
         } else if (c == ' ' || c == '\t') {
-            if(!is_previous_space) {
-                found = true;
-            } else {
-                previous = i;
-            }
+            found = true;
             is_space = true;
+        } else if (is_previous_operator) {
+            found = true;
+            is_previous_operator = false;
         }
 
         if(found) {
+            // std::cerr << "* previous=" << previous << " i=" << i << " c=" << c
+            //           << " is_space=" << is_space << " is_previous_operator=" << is_previous_operator
+            //           << " is_previous_space=" << is_previous_space << " force_found=" << force_found << std::endl;
             if(is_previous_space) {
                 previous++;
             }
             if(previous < i) {
-                auto token = line.substr(previous, i);
+                auto token = line.substr(previous, (i - previous));
                 this->tokens_.emplace_back(token);
             }
             previous = i;
+            is_previous_space = is_space;
         }
-        is_previous_space = is_space;
     }
+    // std::cerr << "* previous=" << previous
+    //           << " is_previous_operator=" << is_previous_operator
+    //           << " is_previous_space=" << is_previous_space << " force_found=" << force_found << std::endl;
     if(is_previous_space) {
         previous++;
     }
@@ -93,13 +96,17 @@ std::vector<Sentence> lex(const std::string &code){
 }
 
 TokenIterator::TokenIterator(const std::vector<Sentence> &&sentences)
-    : sentences_(sentences), head_sentence_(0), token_idx_(0) {}
+    : sentences_(sentences), head_sentence_(0), token_idx_(0),
+      head_sentence_last_(0), token_idx_last_(0)
+    {}
 
-const Token &TokenIterator::look_ahead(bool skip_eos) const {
+const Token &TokenIterator::look_ahead(bool skip_eos) {
     size_t i = this->head_sentence_;
     size_t j = this->token_idx_;
     auto token = &this->get_(i, j);
     if (!skip_eos){
+        this->head_sentence_last_ = i;
+        this->token_idx_last_ = j;
         return *token;
     }
 
@@ -107,35 +114,26 @@ const Token &TokenIterator::look_ahead(bool skip_eos) const {
         i++;
         j = 0;
         if(i >= this->sentences_.size()) {
+            this->head_sentence_last_ = i - 1;
+            this->token_idx_last_ = this->sentences_[i - 1].tokens().size();
             return eos_;
         }
         token = &this->get_(i, j);
     }
+    this->head_sentence_last_ = i;
+    this->token_idx_last_ = j;
     return *token;
 }
 
 const Token &TokenIterator::next(bool skip_eos) {
     // TODO: improve efficiency
     auto &token = this->look_ahead(skip_eos);
-    this->succ(skip_eos);
+    this->succ();
     return token;
 }
 
-void TokenIterator::succ(bool skip_eos) {
-    if (!skip_eos){
-        this->token_idx_++;
-        return;
-    }
-
-    size_t i = this->head_sentence_;
-    size_t j = this->token_idx_;
-    auto token = &this->get_(i, j);
-    while (token->is_eos()) {
-        i++;
-        j = 0;
-        token = &this->get_(i, j);
-    }
-    this->head_sentence_ = i;
-    this->token_idx_ = j;
+void TokenIterator::succ() {
+    this->head_sentence_ = this->head_sentence_last_;
+    this->token_idx_ = this->token_idx_last_ + 1;
 }
 

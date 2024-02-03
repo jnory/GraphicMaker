@@ -6,6 +6,7 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include <iostream>
 
 class Token {
 public:
@@ -14,7 +15,7 @@ public:
 
     template<typename T> T get() const {
         T value;
-        std::stringstream  ss(this->token_);
+        std::stringstream ss(this->token_);
         ss >> value;
         if (ss.fail()) {
             throw std::runtime_error("failed to parse");
@@ -42,16 +43,19 @@ class Sentence {
 public:
     explicit Sentence(const std::string &line);
 
-    const std::string &source() const {
-        return this->line_;
-    }
-
     bool empty() const {
         return tokens_.empty();
     }
 
     const Tokens &tokens() const {
         return this->tokens_;
+    }
+
+    void debug_print() const {
+        for(auto &token: tokens_) {
+            std::cerr << token.get<std::string>() << "|||";
+        }
+        std::cerr << "<EOS>" << std::endl;
     }
 
 private:
@@ -64,12 +68,31 @@ class TokenIterator {
 public:
     explicit TokenIterator(const std::vector<Sentence> &&sentences);
 
-    const Token &look_ahead(bool skip_eos = true) const;
-    void succ(bool skip_eos=true);
+    const Token &look_ahead(bool skip_eos = true);
+    void succ();
     const Token &next(bool skip_eos = true);
 
+    void debug_print() const {
+        std::cerr << "head_sentence_=" << head_sentence_
+                  << " ||| token_idx_=" << token_idx_
+                  << " ||| sentences_.size()=" << sentences_.size()
+                  << std::endl;
+    }
+
     bool is_end_of_code() const {
-        return sentences_.size() <= head_sentence_;
+        auto n = sentences_.size();
+        if(head_sentence_ >= n) {
+            return true;
+        }
+
+        if(head_sentence_ + 1 == n) {
+            auto &tokens = sentences_.back().tokens();
+            if(token_idx_ >= tokens.size()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 private:
@@ -87,6 +110,8 @@ private:
     const std::vector<Sentence> sentences_;
     size_t head_sentence_;
     size_t token_idx_;
+    size_t head_sentence_last_;
+    size_t token_idx_last_;
     static const Token eos_;
 };
 

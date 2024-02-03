@@ -7,7 +7,7 @@
 
 class Immediate {
 public:
-    Immediate(int value): value_(value){};
+    explicit Immediate(int value): value_int_(value){};
 
     template<typename T>
     T get() const {
@@ -15,17 +15,26 @@ public:
     }
 
     template<> int get() const {
-        return this->value_;
+        return this->value_int_;
+    }
+
+    template<> size_t get() const {
+        // TODO: hande properly
+        return (size_t)this->value_int_;
+    }
+    template<> double get() const {
+        // TODO: hande properly: data lost
+        return (double)this->value_int_;
     }
 
 private:
-    int value_;
+    int value_int_;
 };
 
 
 class Environment {
 public:
-    Environment(BitmapFile *file): file_(file){}
+    explicit Environment(BitmapFile *file): file_(file){}
 
     BitmapFile *get_file() {
         return this->file_;

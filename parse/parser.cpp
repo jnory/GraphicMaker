@@ -60,41 +60,43 @@ ShapeDef *build_shape_def(TokenIterator &iterator) {
     // <SHAPE_TYPE> ::= "POINT" | "LINE" | "SQUARE" | "TRIANGLE" | "EQUILATERAL_TRIANGLE" | "RECTANGLE" | "REGULAR_POLYGON" | "CIRCLE" | "LOADPNG"
     // <PARAMETERS> ::= <NO_OP>+
 
-    auto &token = iterator.look_ahead();
-
     if(iterator.is_end_of_code()) {
         return nullptr;
     }
 
-    auto &shape_type = iterator.next();
+    auto &shape_type = iterator.look_ahead();
     if (!is_known_shape(shape_type.get<std::string>())) {
         return nullptr;
     }
 
     iterator.succ();
-    assert(!token.is_eos());
-    auto type = token.get<std::string>();
+    assert(!shape_type.is_eos());
+    auto type = shape_type.get<std::string>();
 
     auto token_ptr = &iterator.next(false);
     std::vector<NoOp *> parameters;
     while(!token_ptr->is_eos()) {
         auto no_op = new NoOp(*token_ptr);
         parameters.push_back(no_op);
+        token_ptr = &iterator.next(false);
     }
     return new ShapeDef(type, parameters);
 }
 
 Command *build_command(TokenIterator &iterator) {
     // <COMMAND> ::= <IF> | <WHILE> | <SHAPE> | <STATEMENT>
-    auto &token = iterator.next();
+    auto &token = iterator.look_ahead();
     auto str = token.get<std::string>();
     if(str == "IF") {
+        iterator.succ();
         return build_if(iterator);
     } else if (str == "WHILE") {
+        iterator.succ();
         return build_while(iterator);
     } else {
         auto shape = build_shape_def(iterator);
         if (shape != nullptr) {
+            // shape->debug_print();
             return shape;
         }
         bool end_by_closed_paren;
@@ -109,9 +111,12 @@ Command *build_command(TokenIterator &iterator) {
 Block *build_block(TokenIterator &iterator, bool &end_by_closed_paren) {
     // <BLOCK> ::= <COMMAND>+
 
+    // iterator.debug_print();
+
     end_by_closed_paren = false;
     std::vector<Command *> commands;
     while(!iterator.is_end_of_code()) {
+        // iterator.debug_print();
         auto &token = iterator.look_ahead();
         if (token.get<std::string>() == "}") {
             end_by_closed_paren = true;
@@ -126,6 +131,10 @@ Block *build_block(TokenIterator &iterator, bool &end_by_closed_paren) {
 Block *parse(const std::string &shape_str)
 {
     auto sentences = lex(shape_str);
+    //    for(auto &sentence: sentences) {
+    //        sentence.debug_print();
+    //    }
+
     TokenIterator iterator(std::move(sentences));
     bool end_by_closed_paren;
     auto block = build_block(iterator, end_by_closed_paren);

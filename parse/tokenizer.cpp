@@ -24,13 +24,56 @@ std::vector<std::string> split_code(const std::string &shape_str)
 }
 
 Sentence::Sentence(const std::string &line): line_(line) {
-    std::stringstream ss(line);
-    while(true) {
-        std::string token;
-        ss >> token;
-        if (ss.fail()) {
-            break;
+    size_t previous = 0;
+    bool is_previous_operator = false;
+    bool is_previous_space = false;
+    bool force_found = false;
+    for(size_t i = 1; i < line.size(); i++) {
+        bool found = false;
+        bool is_space = false;
+        char c = line[i];
+        if(force_found) {
+            found = true;
+            force_found = false;
         }
+
+        if(c == '=' || c == '>' || c == '<' || c == '+' || c == '-' || c == '*' || c == '/') {
+            if(!is_previous_operator) {
+                found = true;
+            }
+            is_previous_operator = true;
+            is_previous_space = false;
+        } else if (c == '(' || c == ')' || c == '{' || c == '}') {
+            found = true;
+            force_found = true;
+            is_previous_operator = false;
+            is_previous_space = false;
+        } else if (c == ' ' || c == '\t') {
+            if(!is_previous_space) {
+                found = true;
+            } else {
+                previous = i;
+            }
+            is_space = true;
+        }
+
+        if(found) {
+            if(is_previous_space) {
+                previous++;
+            }
+            if(previous < i) {
+                auto token = line.substr(previous, i);
+                this->tokens_.emplace_back(token);
+            }
+            previous = i;
+        }
+        is_previous_space = is_space;
+    }
+    if(is_previous_space) {
+        previous++;
+    }
+    if(previous < line.size()) {
+        auto token = line.substr(previous);
         this->tokens_.emplace_back(token);
     }
 }

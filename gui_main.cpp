@@ -79,11 +79,9 @@ void MyFrame::Generate( wxCommandEvent& WXUNUSED(event) ) {
 
     initialize_bmp_file(this->file_, size.GetWidth(), size.GetHeight());
 
-    auto shapes = parse(code);
-    for (auto &shape: shapes) {
-        shape->draw(this->file_);
-        delete shape;
-    }
+    auto ast = parse(code);
+    Environment env(this->file_);
+    ast->run(env);
 
     wxImage image(size);
     for (int x = 0; x < size.GetWidth(); x++) {

@@ -52,6 +52,10 @@ set(SRC_FILES
         parse/commands.hpp
         parse/environment.hpp
         parse/commands.cpp
+        parse/statement.hpp
+        parse/statement.cpp
+        parse/shape_def.hpp
+        parse/shape_def.cpp
 )
 
 if(WIN32)

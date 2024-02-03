@@ -22,7 +22,7 @@ public:
 
 class NoOp: public Statement {
 public:
-    explicit NoOp(Token &token);
+    explicit NoOp(Token token);
     virtual ~NoOp() = default;
 
     virtual void run(Environment &env);
@@ -34,7 +34,7 @@ public:
     }
 
 private:
-    Token token_;
+    const Token token_;
 };
 
 // TODO: implement
@@ -63,12 +63,10 @@ private:
     Statement *s2_;
 };
 
-Statement *build_statement(Tokens &tokens);
-
 
 class Block: public Command {
 public:
-    Block(std::vector<Command *> &commands): commands_(commands){}
+    explicit Block(std::vector<Command *> &commands): commands_(commands){}
 
     virtual ~Block() {
         for(auto &cmd: this->commands_) {
@@ -84,33 +82,47 @@ private:
 
 class If: public Command {
 public:
-    If(Statement *condition, Block &then_clause, Block &else_clause)
+    If(Statement *condition, Block *then_clause, Block *else_clause)
     : condition_(condition), then_clause_(then_clause), else_clause_(else_clause) {}
     virtual ~If() {
         delete this->condition_;
+        delete this->then_clause_;
+        delete this->else_clause_;
     }
 
     virtual void run(Environment &env);
 
 private:
     Statement *condition_;
-    Block then_clause_;
-    Block else_clause_;
+    Block *then_clause_;
+    Block *else_clause_;
 };
 
 class While: public Command {
 public:
-    While(Statement *condition_, Block &block)
+    While(Statement *condition_, Block *block)
     : condition_(condition_), block_(block){}
     virtual ~While() {
         delete this->condition_;
+        delete this->block_;
     }
 
     virtual void run(Environment &env);
 
 private:
     Statement *condition_;
-    Block block_;
+    Block *block_;
+};
+
+class ShapeDef: public Command {
+public:
+    ShapeDef(std::string type, const std::vector<NoOp *> &parameters);
+
+    virtual void run(Environment &env);
+
+private:
+    const std::string type_;
+    const std::vector<NoOp *> parameters_;
 };
 
 #endif // COMMANDS_HPP

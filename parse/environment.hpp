@@ -25,6 +25,8 @@ private:
 
 class Environment {
 public:
+    Environment(BitmapFile *file): file_(file){}
+
     BitmapFile *get_file() {
         return this->file_;
     }

@@ -6,7 +6,8 @@
 
 #include "../shape/shape.hpp"
 #include "tokenizer.hpp"
+#include "commands.hpp"
 
-std::vector<Shape *> parse(const std::string &shape_str);
+Block *parse(const std::string &shape_str);
 
 #endif // PARSER_HPP

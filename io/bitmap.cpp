@@ -479,6 +479,7 @@ int save_bmp_data(FILE *fp, BitmapFile *file)
     return 0;
 }
 
+// TODO: change to const char * or std::string
 int save_bmp_file(char *path, BitmapFile *file)
 {
     FILE *fp = fopen(path, "wb");

@@ -56,14 +56,25 @@ set(SRC_SHAPE_FILES
         shape/circle.cpp
 )
 
-set(SRC_FILES
+set(SRC_DESIGN_FILES
         design/gui.cpp
         design/gui.h
+)
+
+set(SRC_BITMAP_FILES
         io/bitmap.cpp
         io/bitmap.hpp
+)
+
+set(SRC_CUI_FILES
+        ${SRC_BITMAP_FILES}
         ${SRC_SHAPE_FILES}
         ${SRC_PARSER_FILES}
-        tests/test_statement.cpp
+)
+
+set(SRC_FILES
+        ${SRC_CUI_FILES}
+        ${SRC_DESIGN_FILES}
 )
 
 if(WIN32)
@@ -80,6 +91,9 @@ add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE ${SRC_FILES} gui_main.cpp)
 # Link required libraries to the executable
 target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES} lodepng)
 
+
+add_executable(${PROJECT_NAME}_cui ${SRC_CUI_FILES} cui_main.cpp)
+target_link_libraries(${PROJECT_NAME}_cui lodepng)
 
 enable_testing()
 

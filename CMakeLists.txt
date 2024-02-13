@@ -63,6 +63,7 @@ set(SRC_FILES
         io/bitmap.hpp
         ${SRC_SHAPE_FILES}
         ${SRC_PARSER_FILES}
+        tests/test_statement.cpp
 )
 
 if(WIN32)
@@ -82,8 +83,13 @@ target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES} lodepng)
 
 enable_testing()
 
+set(GRAPHIC_TEST_FILES
+        tests/test_lexer.cpp
+        tests/test_statement.cpp
+)
+
 add_executable(${PROJECT_NAME}_test
-        tests/test_lexer.cpp ${SRC_PARSER_FILES} ${SRC_SHAPE_FILES})
+        ${GRAPHIC_TEST_FILES} ${SRC_PARSER_FILES} ${SRC_SHAPE_FILES})
 target_link_libraries(${PROJECT_NAME}_test GTest::gtest GTest::gtest_main lodepng)
 target_include_directories(${PROJECT_NAME}_test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 add_test(NAME run_${PROJECT_NAME}_test COMMAND ${PROJECT_NAME}_test)

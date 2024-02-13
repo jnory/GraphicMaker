@@ -28,7 +28,7 @@ Sentence::Sentence(const std::string &line): line_(line) {
     bool is_previous_operator = false;
     bool is_previous_space = false;
     bool force_found = false;
-    for(size_t i = 1; i < line.size(); i++) {
+    for(size_t i = 0; i < line.size(); i++) {
         bool found = false;
         bool is_space = false;
         char c = line[i];

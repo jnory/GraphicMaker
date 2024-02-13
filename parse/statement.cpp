@@ -6,17 +6,17 @@
 #include "commands.hpp"
 
 std::unordered_map<std::string, int> OPERATORS = {
-        {"+", 2},
-        {"-", 2},
-        {"*", 3},
-        {"/", 3},
+        {"*", 4},
+        {"/", 4},
+        {"+", 3},
+        {"-", 3},
+        {"<", 2},
+        {">", 2},
+        {"<=", 2},
+        {">=", 2},
+        {"==", 2},
         {"=", 1},
-        {"<", 1},
-        {">", 1},
-        {"<=", 1},
-        {">=", 1},
-        {"==", 1},
-        {"__DUMMY", 1},
+        {"__DUMMY__", 1},
 };
 
 
@@ -44,6 +44,9 @@ std::string top_op(std::vector<TokenOrStatement> &stack) {
         if (ts.token != nullptr) {
             auto surface = ts.token->get<std::string>();
             auto found = OPERATORS.find(surface);
+            if (surface == "(") {
+                return surface;
+            }
             if (found != std::end(OPERATORS)) {
                 return surface;
             }
@@ -51,6 +54,7 @@ std::string top_op(std::vector<TokenOrStatement> &stack) {
         it--;
     }
     // bottom token must be dummy;
+    assert(stack[0].token != nullptr);
     return stack[0].token->get<std::string>();
 }
 
@@ -100,14 +104,18 @@ Statement *build_statement(TokenIterator &iterator, bool &end_by_closed_paren) {
             auto found_op = OPERATORS.find(surface);
             auto is_op = found_op != std::end(OPERATORS);
             if (is_op) {
-                auto op_rank = *found_op;
+                auto op_rank = found_op->second;
                 auto previous_op = top_op(stack);
-                auto found_previous_op = OPERATORS.find(previous_op);
-                auto previous_op_rank = *found_previous_op;
-                if (op_rank < previous_op_rank) {
-                    reduce(stack);
-                } else {
+                if (previous_op == "(") {
                     stack.emplace_back(&token);
+                } else {
+                    auto found_previous_op = OPERATORS.find(previous_op);
+                    auto previous_op_rank = found_previous_op->second;
+                    if (op_rank < previous_op_rank) {
+                        reduce(stack);
+                    } else {
+                        stack.emplace_back(&token);
+                    }
                 }
             } else {
                 stack.emplace_back(&token);

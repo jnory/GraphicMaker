@@ -18,6 +18,7 @@ public:
 
     virtual void run(Environment &env) = 0;
     virtual Immediate get_value(Environment &env) = 0;
+    virtual std::string to_string() = 0;
 };
 
 class NoOp: public Statement {
@@ -31,6 +32,9 @@ public:
     bool is_immediate() const;
     std::string get_name() const {
         return this->token_.get<std::string>();
+    }
+    virtual std::string to_string() {
+        return get_name();
     }
 
 private:
@@ -56,6 +60,11 @@ public:
 
     virtual void run(Environment &env);
     virtual Immediate get_value(Environment &env);
+    virtual std::string to_string() {
+        std::stringstream ss;
+        ss << "(" << op_ << " " << s1_->to_string() << " " << s2_->to_string() << ")";
+        return ss.str();
+    }
 
 private:
     std::string op_;

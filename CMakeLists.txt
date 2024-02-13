@@ -86,6 +86,7 @@ enable_testing()
 set(GRAPHIC_TEST_FILES
         tests/test_lexer.cpp
         tests/test_statement.cpp
+        tests/test_parser.cpp
 )
 
 add_executable(${PROJECT_NAME}_test

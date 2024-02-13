@@ -120,6 +120,7 @@ Block *build_block(TokenIterator &iterator, bool &end_by_closed_paren) {
         auto &token = iterator.look_ahead();
         if (token.get<std::string>() == "}") {
             end_by_closed_paren = true;
+            iterator.succ();
             break;
         }
         commands.push_back(build_command(iterator));

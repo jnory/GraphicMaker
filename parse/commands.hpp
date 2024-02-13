@@ -9,6 +9,7 @@ class Command {
 public:
     virtual ~Command() = default;
     virtual void run(Environment &env) = 0;
+    virtual std::string to_string() = 0;
 };
 
 
@@ -18,7 +19,6 @@ public:
 
     virtual void run(Environment &env) = 0;
     virtual Immediate get_value(Environment &env) = 0;
-    virtual std::string to_string() = 0;
 };
 
 class NoOp: public Statement {
@@ -84,6 +84,13 @@ public:
     }
 
     virtual void run(Environment &env);
+    virtual std::string to_string() {
+        std::stringstream ss;
+        for(auto &command: commands_) {
+            ss << "- " << command->to_string() << std::endl;
+        }
+        return ss.str();
+    }
 
 private:
     std::vector<Command *> commands_;
@@ -100,6 +107,18 @@ public:
     }
 
     virtual void run(Environment &env);
+    virtual std::string to_string() {
+        std::stringstream ss;
+        ss << "[If (" << condition_->to_string() << ")";
+        ss << " (" << std::endl;
+        ss << then_clause_->to_string() << ")";
+        if (else_clause_ != nullptr) {
+            ss << " (" << std::endl;
+            ss << else_clause_->to_string() << ")";
+        }
+        ss << "]";
+        return ss.str();
+    }
 
 private:
     Statement *condition_;
@@ -118,6 +137,15 @@ public:
 
     virtual void run(Environment &env);
 
+    virtual std::string to_string() {
+        std::stringstream ss;
+        ss << "[While (" << condition_->to_string() << ")";
+        ss << " (" << std::endl;
+        ss << block_->to_string() << ")";
+        ss << "]";
+        return ss.str();
+    }
+
 private:
     Statement *condition_;
     Block *block_;
@@ -135,6 +163,16 @@ public:
             std::cerr << param->get_name() << " ||| ";
         }
         std::cerr << "<EOS>" << std::endl;
+    }
+
+    virtual std::string to_string() {
+        std::stringstream ss;
+        ss << "[Shape " << type_;
+        for(auto &param: parameters_) {
+            ss << " " << param->to_string();
+        }
+        ss << "]";
+        return ss.str();
     }
 
 private:

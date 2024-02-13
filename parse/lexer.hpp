@@ -89,6 +89,15 @@ public:
         }
     }
 
+    void skip_eos() {
+        for(; head_ < tokens_.size(); head_++) {
+            if(!tokens_[head_].is_eos()){
+                break;
+            }
+        }
+        last_ = head_;
+    }
+
 private:
     const std::vector<Sentence> sentences_;
     std::vector<Token> tokens_;

@@ -73,6 +73,8 @@ void reduce(std::vector<TokenOrStatement> &stack) {
 
 Statement *build_statement(TokenIterator &iterator, bool &end_by_closed_paren) {
     // reference: http://fujimura2.fiw-web.net/java/mutter/operator-precedence/index.html
+    iterator.skip_eos();
+
     end_by_closed_paren = false;
     Token dummy("__DUMMY__");
     std::vector<TokenOrStatement> stack;
@@ -96,10 +98,12 @@ Statement *build_statement(TokenIterator &iterator, bool &end_by_closed_paren) {
                 }
                 op = top_op(stack);
             }
-            TokenOrStatement ts = stack.back();
-            stack.pop_back(); // ts
-            stack.pop_back(); // (
-            stack.push_back(ts);
+            if(!end_by_closed_paren) {
+                TokenOrStatement ts = stack.back();
+                stack.pop_back(); // ts
+                stack.pop_back(); // (
+                stack.push_back(ts);
+            }
         } else {
             auto found_op = OPERATORS.find(surface);
             auto is_op = found_op != std::end(OPERATORS);
@@ -120,6 +124,9 @@ Statement *build_statement(TokenIterator &iterator, bool &end_by_closed_paren) {
             } else {
                 stack.emplace_back(&token);
             }
+        }
+        if(end_by_closed_paren) {
+            break;
         }
     }
     while (stack.size() > 2) {

@@ -1,6 +1,7 @@
 #ifndef ENVIRONMENT_HPP
 #define ENVIRONMENT_HPP
 
+#include <iostream>
 #include <unordered_map>
 
 #include "../io/bitmap.hpp"
@@ -49,9 +50,18 @@ public:
     }
 
     Immediate set_variable(std::string &name, Immediate value) {
-        this->variables_.insert({name, value});
+        auto result = this->variables_.insert({name, value});
+        if(!result.second) {
+            result.first->second = value;
+        }
         return value;
+    }
 
+    void debug_print() {
+        std::cerr << "===" << std::endl;
+        for(auto &p: variables_) {
+            std::cerr << p.first << "|||" << p.second.get<int>() << std::endl;
+        }
     }
 
 private:

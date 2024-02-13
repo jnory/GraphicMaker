@@ -88,10 +88,12 @@ void If::run(Environment &env) {
 }
 
 void While::run(Environment &env) {
+    env.debug_print();
     auto result = this->condition_->get_value(env);
     while(result.get<int>() != 0) {
         this->block_->run(env);
         result = this->condition_->get_value(env);
+        env.debug_print();
     }
 }
 

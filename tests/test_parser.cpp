@@ -35,3 +35,42 @@ TEST(ParserTest, test_parse_while){
             ")]\n"
     );
 }
+
+TEST(ParserTest, test_parse_if){
+    std::string code =
+            "i = 1\n"
+            "IF(i < 10){\n"
+            "i = i + 1\n"
+            "}";
+    Block *block = parse(code);
+    auto actual = block->to_string();
+    EXPECT_EQ(
+            actual,
+            "- (= i 1)\n"
+            "- [If ((< i 10)) (\n"
+            "- (= i (+ i 1))\n"
+            ")]\n"
+    );
+}
+
+TEST(ParserTest, test_parse_if_else){
+    std::string code =
+            "i = 1\n"
+            "IF(i < 10){\n"
+            "i = i + 1\n"
+            "} ELSE {\n"
+            "i = i + 2\n"
+            "}";
+
+    Block *block = parse(code);
+    auto actual = block->to_string();
+    EXPECT_EQ(
+            actual,
+            "- (= i 1)\n"
+            "- [If ((< i 10)) (\n"
+            "- (= i (+ i 1))\n"
+            ") (\n"
+            "- (= i (+ i 2))\n"
+            ")]\n"
+    );
+}

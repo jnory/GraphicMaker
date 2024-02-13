@@ -12,6 +12,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Request the required wxWidgets libs
 find_package(wxWidgets 3.2 COMPONENTS core base REQUIRED CONFIG)
 find_package(lodepng CONFIG REQUIRED)
+find_package(GTest CONFIG REQUIRED)
 
 # Include the wxWidgets use file to initialize various settings
 if(wxWidgets_USE_FILE)
@@ -19,34 +20,9 @@ if(wxWidgets_USE_FILE)
 endif()
 
 # Define a variable containing a list of source files for the project
-set(SRC_FILES
-    gui_main.cpp
-    design/gui.cpp
-    design/gui.h
-    io/bitmap.cpp
-    parse/parser.cpp
-    shape/equilateral_triangle.cpp
-    shape/line.cpp
-    shape/point.cpp
-    shape/rectangle.cpp
-    shape/regular_polygon.cpp
-    shape/shape.cpp
-    shape/square.cpp
-    shape/triangle.cpp
-    shape/png_image.cpp
-    shape/png_image.hpp
-    io/bitmap.hpp
-    parse/parser.hpp
-    shape/equilateral_triangle.hpp
-    shape/line.hpp
-    shape/point.hpp
-    shape/rectangle.hpp
-    shape/regular_polygon.hpp
-    shape/shape.hpp
-    shape/square.hpp
-    shape/triangle.hpp
-    shape/circle.hpp
-    shape/circle.cpp
+set(SRC_PARSER_FILES
+        parse/parser.cpp
+        parse/parser.hpp
         parse/lexer.cpp
         parse/lexer.hpp
         parse/commands.hpp
@@ -56,6 +32,37 @@ set(SRC_FILES
         parse/statement.cpp
         parse/shape_def.hpp
         parse/shape_def.cpp
+)
+set(SRC_SHAPE_FILES
+        shape/equilateral_triangle.cpp
+        shape/line.cpp
+        shape/point.cpp
+        shape/rectangle.cpp
+        shape/regular_polygon.cpp
+        shape/shape.cpp
+        shape/square.cpp
+        shape/triangle.cpp
+        shape/png_image.cpp
+        shape/png_image.hpp
+        shape/equilateral_triangle.hpp
+        shape/line.hpp
+        shape/point.hpp
+        shape/rectangle.hpp
+        shape/regular_polygon.hpp
+        shape/shape.hpp
+        shape/square.hpp
+        shape/triangle.hpp
+        shape/circle.hpp
+        shape/circle.cpp
+)
+
+set(SRC_FILES
+        design/gui.cpp
+        design/gui.h
+        io/bitmap.cpp
+        io/bitmap.hpp
+        ${SRC_SHAPE_FILES}
+        ${SRC_PARSER_FILES}
 )
 
 if(WIN32)
@@ -68,6 +75,15 @@ else()
 endif()
 
 # Define the build target for the executable
-add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE ${SRC_FILES})
+add_executable(${PROJECT_NAME} WIN32 MACOSX_BUNDLE ${SRC_FILES} gui_main.cpp)
 # Link required libraries to the executable
 target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES} lodepng)
+
+
+enable_testing()
+
+add_executable(${PROJECT_NAME}_test
+        tests/test_lexer.cpp ${SRC_PARSER_FILES} ${SRC_SHAPE_FILES})
+target_link_libraries(${PROJECT_NAME}_test GTest::gtest GTest::gtest_main lodepng)
+target_include_directories(${PROJECT_NAME}_test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+add_test(NAME run_${PROJECT_NAME}_test COMMAND ${PROJECT_NAME}_test)

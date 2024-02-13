@@ -1,7 +1,6 @@
 #ifndef LEXER_HPP
 #define LEXER_HPP
 
-
 #include <utility>
 #include <sstream>
 #include <vector>
@@ -73,45 +72,28 @@ public:
     const Token &next(bool skip_eos = true);
 
     void debug_print() const {
-        std::cerr << "head_sentence_=" << head_sentence_
-                  << " ||| token_idx_=" << token_idx_
+        std::cerr << "head_=" << head_
+                  << " ||| last_=" << last_
                   << " ||| sentences_.size()=" << sentences_.size()
+                  << " ||| tokens_.size()=" << tokens_.size()
                   << std::endl;
     }
 
     bool is_end_of_code() const {
-        auto n = sentences_.size();
-        if(head_sentence_ >= n) {
+        if(this->tokens_.size() <= this->head_) {
             return true;
+        } else if (this->tokens_.size() == this->head_ + 1) {
+            return this->tokens_[this->head_].is_eos();
+        } else {
+            return false;
         }
-
-        if(head_sentence_ + 1 == n) {
-            auto &tokens = sentences_.back().tokens();
-            if(token_idx_ >= tokens.size()) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
 private:
-    const Token &get_(size_t i, size_t j) const {
-        if(sentences_.size() <= i) {
-            throw std::runtime_error("index overflow: sentences_ > i");
-        }
-        auto &tokens = sentences_[i].tokens();
-        if(tokens.size() <= j) {
-            return TokenIterator::eos_;
-        }
-        return tokens[j];
-    }
-
     const std::vector<Sentence> sentences_;
-    size_t head_sentence_;
-    size_t token_idx_;
-    size_t head_sentence_last_;
-    size_t token_idx_last_;
+    std::vector<Token> tokens_;
+    size_t head_;
+    size_t last_;
     static const Token eos_;
 };
 

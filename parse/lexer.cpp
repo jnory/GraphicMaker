@@ -96,33 +96,24 @@ std::vector<Sentence> lex(const std::string &code){
 }
 
 TokenIterator::TokenIterator(const std::vector<Sentence> &&sentences)
-    : sentences_(sentences), head_sentence_(0), token_idx_(0),
-      head_sentence_last_(0), token_idx_last_(0)
-    {}
+    : sentences_(sentences), head_(0), last_(0)
+{
+    for(auto &sentence: sentences) {
+        auto &tokens = sentence.tokens();
+        for(const auto& token: tokens) {
+            this->tokens_.push_back(token);
+        }
+        this->tokens_.push_back(TokenIterator::eos_);
+    }
+}
 
 const Token &TokenIterator::look_ahead(bool skip_eos) {
-    size_t i = this->head_sentence_;
-    size_t j = this->token_idx_;
-    auto token = &this->get_(i, j);
-    if (!skip_eos){
-        this->head_sentence_last_ = i;
-        this->token_idx_last_ = j;
-        return *token;
-    }
-
-    while (token->is_eos()) {
+    size_t i = this->head_;
+    while(skip_eos && this->tokens_[i].is_eos()) {
         i++;
-        j = 0;
-        if(i >= this->sentences_.size()) {
-            this->head_sentence_last_ = i - 1;
-            this->token_idx_last_ = this->sentences_[i - 1].tokens().size();
-            return eos_;
-        }
-        token = &this->get_(i, j);
     }
-    this->head_sentence_last_ = i;
-    this->token_idx_last_ = j;
-    return *token;
+    this->last_ = i;
+    return this->tokens_[i];
 }
 
 const Token &TokenIterator::next(bool skip_eos) {
@@ -133,7 +124,7 @@ const Token &TokenIterator::next(bool skip_eos) {
 }
 
 void TokenIterator::succ() {
-    this->head_sentence_ = this->head_sentence_last_;
-    this->token_idx_ = this->token_idx_last_ + 1;
+    this->last_++;
+    this->head_ = this->last_;
 }
 

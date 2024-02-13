@@ -80,6 +80,7 @@ Statement *build_statement(TokenIterator &iterator, bool &end_by_closed_paren) {
         }
         auto surface = token.get<std::string>();
         if (surface == "(") {
+            // TODO: check if this is ok.
             stack.emplace_back(&token);
         } else if (surface == ")") {
             auto op = top_op(stack);

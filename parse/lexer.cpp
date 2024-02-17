@@ -3,6 +3,7 @@
 #include "lexer.hpp"
 
 const Token TokenIterator::eos_ = Token("<EOS>", true);
+void start_state(size_t line_no, const std::string &line, size_t position, std::vector<Token> &tokens);
 
 
 std::vector<std::string> split_code(const std::string &shape_str)
@@ -23,74 +24,160 @@ std::vector<std::string> split_code(const std::string &shape_str)
     return lines;
 }
 
-Sentence::Sentence(const std::string &line): line_(line) {
-    size_t previous = 0;
-    bool is_previous_operator = false;
-    bool is_previous_space = false;
-    bool force_found = false;
-    for(size_t i = 0; i < line.size(); i++) {
-        bool found = false;
-        bool is_space = false;
-        char c = line[i];
-        if(force_found) {
-            found = true;
-            force_found = false;
-        }
+enum CharType {
+    SPACE,
+    OPERATOR,
+    PAREN,
+    NUMBER,
+    ALPHABET,
+    DOT,
+    OTHER,
+};
 
-        if(c == '=' || c == '>' || c == '<' || c == '+' || c == '-' || c == '*' || c == '/') {
-            if(!is_previous_operator) {
-                found = true;
-            }
-            is_previous_operator = true;
-        } else if (c == '(' || c == ')' || c == '{' || c == '}') {
-            found = true;
-            force_found = true;
-            is_previous_operator = false;
-        } else if (c == ' ' || c == '\t') {
-            found = true;
-            is_space = true;
-        } else if (is_previous_operator) {
-            found = true;
-            is_previous_operator = false;
+CharType detect_char_type(char c) {
+    switch(c) {
+    case ' ':
+    case '\t':
+        return SPACE;
+    case '=':
+    case '>':
+    case '<':
+    case '+':
+    case '-':
+    case '*':
+    case '/':
+        return OPERATOR;
+    case '(':
+    case ')':
+    case '{':
+    case '}':
+        return PAREN;
+    case '.':
+        return DOT;
+    default:
+        if ('0' <= c && c <= '9') {
+            return NUMBER;
+        } else if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')) {
+            return ALPHABET;
+        } else {
+            return OTHER;
         }
+    }
+}
 
-        if(found) {
-            // std::cerr << "* previous=" << previous << " i=" << i << " c=" << c
-            //           << " is_space=" << is_space << " is_previous_operator=" << is_previous_operator
-            //           << " is_previous_space=" << is_previous_space << " force_found=" << force_found << std::endl;
-            if(is_previous_space) {
-                previous++;
-            }
-            if(previous < i) {
-                auto token = line.substr(previous, (i - previous));
-                this->tokens_.emplace_back(token);
-            }
-            previous = i;
-            is_previous_space = is_space;
+std::string build_error_message(size_t line_no, size_t position){
+    std::stringstream ss;
+    ss << "lexer: invalid character at line " << line_no << ", position " << position << std::endl;
+    return ss.str();
+}
+
+
+void goal_state(size_t line_no, const std::string &line, size_t start, size_t end, std::vector<Token> &tokens)
+{
+    std::string token = line.substr(start, end - start);
+    tokens.emplace_back(token);
+    return start_state(line_no, line, end, tokens);
+}
+
+void alphabet_token_state(size_t line_no, const std::string &line, size_t position, std::vector<Token> &tokens)
+{
+    for(size_t i = position + 1; i < line.size(); i++) {
+        switch(detect_char_type(line[i])) {
+        case ALPHABET:
+        case NUMBER:
+            break;
+        case DOT:
+        case SPACE:
+        case PAREN:
+        case OPERATOR:
+            return goal_state(line_no, line, position, i, tokens);
+        default:
+            throw std::runtime_error(build_error_message(line_no, i));
         }
     }
-    // std::cerr << "* previous=" << previous
-    //           << " is_previous_operator=" << is_previous_operator
-    //           << " is_previous_space=" << is_previous_space << " force_found=" << force_found << std::endl;
-    if(is_previous_space) {
-        previous++;
+    return goal_state(line_no, line, position, line.size(), tokens);
+
+}
+
+void number_token_state(size_t line_no, const std::string &line, size_t position, std::vector<Token> &tokens)
+{
+    for(size_t i = position + 1; i < line.size(); i++) {
+        switch(detect_char_type(line[i])) {
+        case NUMBER:
+        case DOT:
+            break;
+        case SPACE:
+        case PAREN:
+        case ALPHABET:
+        case OPERATOR:
+            return goal_state(line_no, line, position, i, tokens);
+        default:
+            throw std::runtime_error(build_error_message(line_no, i));
+        }
     }
-    if(previous < line.size()) {
-        auto token = line.substr(previous);
-        this->tokens_.emplace_back(token);
+    return goal_state(line_no, line, position, line.size(), tokens);
+}
+
+void paren_token_state(size_t line_no, const std::string &line, size_t position, std::vector<Token> &tokens)
+{
+    return goal_state(line_no, line, position, position + 1, tokens);
+}
+
+void operator_token_state(size_t line_no, const std::string &line, size_t position, std::vector<Token> &tokens)
+{
+    for(size_t i = position + 1; i < line.size(); i++) {
+        switch(detect_char_type(line[i])) {
+        case SPACE:
+        case PAREN:
+        case NUMBER:
+        case ALPHABET:
+            return goal_state(line_no, line, position, i, tokens);
+        case OPERATOR:
+            break;
+        case DOT:
+        default:
+            throw std::runtime_error(build_error_message(line_no, i));
+        }
     }
+    return goal_state(line_no, line, position, line.size(), tokens);
+}
+
+void start_state(size_t line_no, const std::string &line, size_t position, std::vector<Token> &tokens)
+{
+    for(size_t i = position; i < line.size(); i++) {
+        switch(detect_char_type(line[i])) {
+        case SPACE:
+            break;
+        case OPERATOR:
+            return operator_token_state(line_no, line, i, tokens);
+        case PAREN:
+            return paren_token_state(line_no, line, i, tokens);
+        case NUMBER:
+            return number_token_state(line_no, line, i, tokens);
+        case ALPHABET:
+            return alphabet_token_state(line_no, line, i, tokens);
+        case DOT:
+        default:
+            throw std::runtime_error(build_error_message(line_no, i));
+        }
+    }
+}
+
+Sentence::Sentence(size_t line_no, const std::string &line): line_(line) {
+    start_state(line_no, line, 0, this->tokens_);
 }
 
 std::vector<Sentence> lex(const std::string &code){
     auto lines = split_code(code);
     std::vector<Sentence> sentences;
     sentences.reserve(lines.size());
+    size_t i = 0;
     for(auto &line: lines) {
-        Sentence s(line);
-        if (s.empty()) {
-            continue;
+        Sentence s(i, line);
+        if (!s.empty()) {
+            sentences.push_back(s);
         }
-        sentences.push_back(s);
+        i++;
     }
     return sentences;
 }

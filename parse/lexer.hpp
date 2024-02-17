@@ -40,7 +40,7 @@ using Tokens =  std::vector<Token>;
 
 class Sentence {
 public:
-    explicit Sentence(const std::string &line);
+    explicit Sentence(size_t line_no, const std::string &line);
 
     bool empty() const {
         return tokens_.empty();

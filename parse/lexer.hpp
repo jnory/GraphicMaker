@@ -13,10 +13,13 @@ public:
     explicit Token(std::string token, bool is_special_token = false)
         : token_(std::move(token)), is_special_token_(is_special_token),
         is_number_(
-                (!token.empty()) &&
-                ('0' <= token[0] && token[0] <= '9')
+              (!token_.empty()) &&
+              ('0' <= token_[0] && token_[0] <= '9')
         ),
-        is_string_((!token.empty()) && token[0] == '"')
+        is_float_(
+                is_number_ && token_.find('.') != std::string::npos
+        ),
+        is_string_((!token_.empty()) && token_[0] == '"')
         {}
 
     template<typename T> T get() const {
@@ -37,6 +40,10 @@ public:
         return this->is_special_token_ && this->token_ == "<EOS>";
     }
 
+    bool is_float() const {
+        return this->is_float_;
+    }
+
     bool is_number() const {
         return this->is_number_;
     }
@@ -49,6 +56,7 @@ private:
     const std::string token_;
     const bool is_special_token_;
     const bool is_number_;
+    const bool is_float_;
     const bool is_string_;
 };
 

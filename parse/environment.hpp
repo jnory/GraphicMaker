@@ -46,9 +46,13 @@ public:
     }
 
     template<> size_t get() const {
-        assert(type_ == IM_INTEGER);
         // TODO: check value range
-        return (size_t) this->value_.integer;
+        if (type_ == IM_INTEGER) {
+            return (size_t) this->value_.integer;
+        } else {
+            assert(type_ == IM_FLOAT);
+            return (size_t) this->value_.floating;
+        }
     }
 
     Immediate operator+(Immediate &other) {

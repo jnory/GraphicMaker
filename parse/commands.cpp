@@ -9,15 +9,16 @@ NoOp::NoOp(Token token): token_(std::move(token)){
 }
 
 Immediate NoOp::get_value(Environment &env) {
-    std::string token_str = this->token_.get<std::string>();
-    char first_letter = token_str[0];
-    if (this->token_.is_eos()) {
+    if (this->token_.is_number()) {
         return Immediate(this->token_.get<int64_t>());
+    } else if (this->token_.is_float()) {
+        return Immediate(this->token_.get<double>());
     // TODO: implement string
     // } else if (this->token_.is_string()) {
     //    return Immediate(this->token_.get<std::string>());
     } else {
-        // TODO: implement string
+        std::string token_str = this->token_.get<std::string>();
+        char first_letter = token_str[0];
         assert(first_letter != '"');
         return env.lookup_variable(token_str);
     }

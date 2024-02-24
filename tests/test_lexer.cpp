@@ -139,3 +139,18 @@ TEST(LexerTest, test_lex_paren_num) {
     EXPECT_EQ(tokens[5].get<std::string>(), "*");
     EXPECT_EQ(tokens[6].get<std::string>(), "3");
 }
+
+TEST(LexerTest, test_lex_float) {
+    std::string code = "(1+2)*3.4";
+    auto sentences = lex(code);
+    ASSERT_EQ(sentences.size(), 1);
+    auto &tokens = sentences[0].tokens();
+    ASSERT_EQ(tokens.size(), 7);
+    EXPECT_EQ(tokens[0].get<std::string>(), "(");
+    EXPECT_EQ(tokens[1].get<std::string>(), "1");
+    EXPECT_EQ(tokens[2].get<std::string>(), "+");
+    EXPECT_EQ(tokens[3].get<std::string>(), "2");
+    EXPECT_EQ(tokens[4].get<std::string>(), ")");
+    EXPECT_EQ(tokens[5].get<std::string>(), "*");
+    EXPECT_EQ(tokens[6].get<std::string>(), "3.4");
+}

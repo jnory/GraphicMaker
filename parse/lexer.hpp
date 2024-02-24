@@ -9,8 +9,15 @@
 
 class Token {
 public:
+    // TODO: support float notation starting with period (e.g.: .123)
     explicit Token(std::string token, bool is_special_token = false)
-        : token_(std::move(token)), is_special_token_(is_special_token) {}
+        : token_(std::move(token)), is_special_token_(is_special_token),
+        is_number_(
+                (!token.empty()) &&
+                ('0' <= token[0] && token[0] <= '9')
+        ),
+        is_string_((!token.empty()) && token[0] == '"')
+        {}
 
     template<typename T> T get() const {
         T value;
@@ -30,9 +37,19 @@ public:
         return this->is_special_token_ && this->token_ == "<EOS>";
     }
 
+    bool is_number() const {
+        return this->is_number_;
+    }
+
+    bool is_string() const {
+        return this->is_string_;
+    }
+
 private:
     const std::string token_;
     const bool is_special_token_;
+    const bool is_number_;
+    const bool is_string_;
 };
 
 

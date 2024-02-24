@@ -11,9 +11,13 @@ NoOp::NoOp(Token token): token_(std::move(token)){
 Immediate NoOp::get_value(Environment &env) {
     std::string token_str = this->token_.get<std::string>();
     char first_letter = token_str[0];
-    if ('0' <= first_letter && first_letter <= '9') {
-        return Immediate(this->token_.get<int>());
+    if (this->token_.is_eos()) {
+        return Immediate(this->token_.get<int64_t>());
+    // TODO: implement string
+    // } else if (this->token_.is_string()) {
+    //    return Immediate(this->token_.get<std::string>());
     } else {
+        // TODO: implement string
         assert(first_letter != '"');
         return env.lookup_variable(token_str);
     }
@@ -24,9 +28,7 @@ void NoOp::run(Environment &env) {
 }
 
 bool NoOp::is_immediate() const {
-    std::string token_str = this->token_.get<std::string>();
-    char first_letter = token_str[0];
-    return '0' <= first_letter && first_letter <= '9';
+    return this->token_.is_number() || this->token_.is_string();
 }
 
 
@@ -45,24 +47,24 @@ Immediate BinaryOp::get_value(Environment &env) {
 
     auto v1 = s1_->get_value(env);
     if (this->op_ == "*") {
-        return Immediate(v1.get<int>() * v2.get<int>());
+        return v1 * v2;
     } else if (this->op_ == "/") {
-        return Immediate(v1.get<int>() / v2.get<int>());
+        return v1 / v2;
     } else if (this->op_ == "+") {
-        return Immediate(v1.get<int>() + v2.get<int>());
+        return v1 + v2;
     } else if (this->op_ == "-") {
-        return Immediate(v1.get<int>() - v2.get<int>());
+        return v1 - v2;
     } else if (this->op_ == "<") {
-        return Immediate(v1.get<int>() < v2.get<int>());
+        return v1 < v2;
     } else if (this->op_ == ">") {
-        return Immediate(v1.get<int>() > v2.get<int>());
+        return v1 > v2;
     } else if (this->op_ == "<=") {
-        return Immediate(v1.get<int>() <= v2.get<int>());
+        return v1 <= v2;
     } else if (this->op_ == ">=") {
-        return Immediate(v1.get<int>() >= v2.get<int>());
+        return v1 >= v2;
     } else {
         assert(this->op_ == "==");
-        return Immediate(v1.get<int>() == v2.get<int>());
+        return v1 == v2;
     }
 }
 

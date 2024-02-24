@@ -154,3 +154,30 @@ TEST(LexerTest, test_lex_float) {
     EXPECT_EQ(tokens[5].get<std::string>(), "*");
     EXPECT_EQ(tokens[6].get<std::string>(), "3.4");
 }
+
+TEST(LexerTest, test_lex_string) {
+    std::string code = "a=\"hello\"";
+    auto sentences = lex(code);
+    ASSERT_EQ(sentences.size(), 1);
+    auto &tokens = sentences[0].tokens();
+    ASSERT_EQ(tokens.size(), 3);
+    EXPECT_EQ(tokens[0].get<std::string>(), "a");
+    EXPECT_EQ(tokens[1].get<std::string>(), "=");
+    EXPECT_EQ(tokens[2].get<std::string>(), "\"hello\"");
+}
+
+TEST(LexerTest, test_lex_string_words) {
+    std::string code = "a=\"hello, world!\"";
+    auto sentences = lex(code);
+    ASSERT_EQ(sentences.size(), 1);
+    auto &tokens = sentences[0].tokens();
+    ASSERT_EQ(tokens.size(), 3);
+    EXPECT_EQ(tokens[0].get<std::string>(), "a");
+    EXPECT_EQ(tokens[1].get<std::string>(), "=");
+    EXPECT_EQ(tokens[2].get<std::string>(), "\"hello, world!\"");
+}
+
+TEST(LexerTest, test_lex_string_error) {
+    std::string code = "a=\"hello\"\"";
+    ASSERT_THROW(lex(code), std::runtime_error);
+}

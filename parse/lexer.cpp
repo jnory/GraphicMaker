@@ -31,6 +31,7 @@ enum CharType {
     NUMBER,
     ALPHABET,
     DOT,
+    QUOTE,
     OTHER,
 };
 
@@ -54,6 +55,8 @@ CharType detect_char_type(char c) {
         return PAREN;
     case '.':
         return DOT;
+    case '"':
+        return QUOTE;
     default:
         if ('0' <= c && c <= '9') {
             return NUMBER;
@@ -91,6 +94,7 @@ void alphabet_token_state(size_t line_no, const std::string &line, size_t positi
         case PAREN:
         case OPERATOR:
             return goal_state(line_no, line, position, i, tokens);
+        case QUOTE:
         default:
             throw std::runtime_error(build_error_message(line_no, i));
         }
@@ -111,6 +115,7 @@ void number_token_state(size_t line_no, const std::string &line, size_t position
         case ALPHABET:
         case OPERATOR:
             return goal_state(line_no, line, position, i, tokens);
+        case QUOTE:
         default:
             throw std::runtime_error(build_error_message(line_no, i));
         }
@@ -131,6 +136,7 @@ void operator_token_state(size_t line_no, const std::string &line, size_t positi
         case PAREN:
         case NUMBER:
         case ALPHABET:
+        case QUOTE:
             return goal_state(line_no, line, position, i, tokens);
         case OPERATOR:
             break;
@@ -140,6 +146,21 @@ void operator_token_state(size_t line_no, const std::string &line, size_t positi
         }
     }
     return goal_state(line_no, line, position, line.size(), tokens);
+}
+
+void string_token_state(size_t line_no, const std::string &line, size_t position, std::vector<Token> &tokens) {
+    // TODO: support escape character
+    for(size_t i = position + 1; i < line.size(); i++) {
+        switch(detect_char_type(line[i])) {
+        case QUOTE:
+            return goal_state(line_no, line, position, i + 1, tokens);
+        default:
+            break;
+        }
+    }
+    std::stringstream ss;
+    ss << "lexer: end quote not found at line " << line_no << std::endl;
+    throw std::runtime_error(ss.str());
 }
 
 void start_state(size_t line_no, const std::string &line, size_t position, std::vector<Token> &tokens)
@@ -156,6 +177,8 @@ void start_state(size_t line_no, const std::string &line, size_t position, std::
             return number_token_state(line_no, line, i, tokens);
         case ALPHABET:
             return alphabet_token_state(line_no, line, i, tokens);
+        case QUOTE:
+            return string_token_state(line_no, line, i, tokens);
         case DOT:
         default:
             throw std::runtime_error(build_error_message(line_no, i));

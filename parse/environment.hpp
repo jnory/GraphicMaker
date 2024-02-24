@@ -89,8 +89,21 @@ public:
     }
 
     Immediate operator/(Immediate &other) {
-        auto value = get_as_float() / other.get_as_float();
-        return Immediate(value);
+        // TODO: too slow. Introduce //??
+        if (type_ == IM_FLOAT) {
+            auto value = value_.floating / other.get_as_float();
+            return Immediate(value);
+        } else {
+            assert(type_ == IM_INTEGER);
+            if (other.type_ == IM_INTEGER) {
+                auto value = value_.integer / other.value_.integer;
+                return Immediate(value);
+            } else {
+                assert(other.type_ == IM_FLOAT);
+                auto value = (double)value_.integer / other.value_.floating;
+                return Immediate(value);
+            }
+        }
     }
 
     Immediate operator>(Immediate &other) {

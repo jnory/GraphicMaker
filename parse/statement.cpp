@@ -5,18 +5,20 @@
 #include "statement.hpp"
 #include "commands.hpp"
 
-std::unordered_map<std::string, int> OPERATORS = {
-        {"*", 4},
-        {"/", 4},
-        {"+", 3},
-        {"-", 3},
-        {"<", 2},
-        {">", 2},
-        {"<=", 2},
-        {">=", 2},
-        {"==", 2},
-        {"=", 1},
-        {"__DUMMY__", 1},
+std::unordered_map<std::string, std::pair<int, int>> OPERATORS = {
+        {"*", {5, 5}},
+        {"/", {5, 5}},
+        {"+", {4, 4}},
+        {"-", {4, 4}},
+        {"<", {3, 3}},
+        {">", {3, 3}},
+        {"<=", {3, 3}},
+        {">=", {3, 3}},
+        {"==", {3, 3}},
+        {"=", {2, 2}},
+        {"(", {1, 6}},
+        {")", {6, 1}},
+        {"__DUMMY__", {0, 0}},
 };
 
 
@@ -44,9 +46,6 @@ std::string top_op(std::vector<TokenOrStatement> &stack) {
         if (ts.token != nullptr) {
             auto surface = ts.token->get<std::string>();
             auto found = OPERATORS.find(surface);
-            if (surface == "(") {
-                return surface;
-            }
             if (found != std::end(OPERATORS)) {
                 return surface;
             }
@@ -58,6 +57,26 @@ std::string top_op(std::vector<TokenOrStatement> &stack) {
     return stack[0].token->get<std::string>();
 }
 
+std::pair<int, std::string> top_op_rank(std::vector<TokenOrStatement> &stack) {
+    auto op = top_op(stack);
+    auto found = OPERATORS.find(op);
+    auto rank = found->second;
+    return {rank.first, op};
+}
+
+void pop(std::vector<TokenOrStatement> &stack) {
+    assert(stack.size() >= 3);
+    auto &s = stack.back();
+    stack.pop_back();
+
+    auto &paren_or_dummy = stack.back();
+    assert(paren_or_dummy.token != nullptr);
+    auto paren_or_dummy_surface = paren_or_dummy.token->get<std::string>();
+    assert(paren_or_dummy_surface == "(");
+    stack.pop_back();
+    stack.push_back(s);
+}
+
 void reduce(std::vector<TokenOrStatement> &stack) {
     assert(stack.size() >= 4);
     auto &s2 = stack.back();
@@ -67,6 +86,7 @@ void reduce(std::vector<TokenOrStatement> &stack) {
     stack.pop_back();
     auto &s1 = stack.back();
     stack.pop_back();
+
     auto op = op_token.token->get<std::string>();
     stack.emplace_back(new BinaryOp(op, s1.as_statement(), s2.as_statement()));
 }
@@ -85,47 +105,31 @@ Statement *build_statement(TokenIterator &iterator, bool &end_by_closed_paren) {
             break;
         }
         auto surface = token.get<std::string>();
-        if (surface == "(") {
-            // TODO: check if this is ok.
+        auto found_op = OPERATORS.find(surface);
+        if (found_op == std::end(OPERATORS)) {
             stack.emplace_back(&token);
-        } else if (surface == ")") {
-            auto op = top_op(stack);
-            while (op != "(") {
-                reduce(stack);
-                if (stack.size() < 3) {
-                    end_by_closed_paren = true;
-                    break;
-                }
-                op = top_op(stack);
-            }
-            if(!end_by_closed_paren) {
-                TokenOrStatement ts = stack.back();
-                stack.pop_back(); // ts
-                stack.pop_back(); // (
-                stack.push_back(ts);
-            }
-        } else {
-            auto found_op = OPERATORS.find(surface);
-            auto is_op = found_op != std::end(OPERATORS);
-            if (is_op) {
-                auto op_rank = found_op->second;
-                auto previous_op = top_op(stack);
-                if (previous_op == "(") {
-                    stack.emplace_back(&token);
-                } else {
-                    auto found_previous_op = OPERATORS.find(previous_op);
-                    auto previous_op_rank = found_previous_op->second;
-                    if (op_rank < previous_op_rank) {
-                        reduce(stack);
-                    } else {
-                        stack.emplace_back(&token);
-                    }
-                }
-            } else {
-                stack.emplace_back(&token);
-            }
+            continue;
         }
-        if(end_by_closed_paren) {
+
+        auto op_rank = found_op->second.second;
+        auto previous_op_rank = top_op_rank(stack);
+        bool popped = false;
+        while (op_rank <= previous_op_rank.first) {
+            if (surface == ")" && previous_op_rank.second == "(") {
+                pop(stack);
+                popped = true;
+                break;
+            } else {
+                reduce(stack);
+            }
+            previous_op_rank = top_op_rank(stack);
+        }
+
+        auto previous_op = top_op(stack);
+        if (surface != ")") {
+            stack.emplace_back(&token);
+        } else if(previous_op == "__DUMMY__" && !popped) {
+            end_by_closed_paren = true;
             break;
         }
     }

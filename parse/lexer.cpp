@@ -57,6 +57,8 @@ CharType detect_char_type(char c) {
         return DOT;
     case '"':
         return QUOTE;
+    case '_':
+        return ALPHABET;
     default:
         if ('0' <= c && c <= '9') {
             return NUMBER;

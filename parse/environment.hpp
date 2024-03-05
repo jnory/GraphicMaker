@@ -36,13 +36,19 @@ public:
     }
 
     template<> int64_t get() const {
-        assert(type_ == IM_INTEGER);
-        return this->value_.integer;
+        if (type_ == IM_INTEGER) {
+            return this->value_.integer;
+        } else {
+            return (int64_t) this->value_.floating;
+        }
     }
 
     template<> double get() const {
-        assert(type_ == IM_FLOAT);
-        return this->value_.floating;
+        if(type_ == IM_FLOAT) {
+            return this->value_.floating;
+        } else {
+            return (double) this->value_.integer;
+        }
     }
 
     template<> size_t get() const {

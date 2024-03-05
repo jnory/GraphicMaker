@@ -101,6 +101,7 @@ set(GRAPHIC_TEST_FILES
         tests/test_lexer.cpp
         tests/test_statement.cpp
         tests/test_parser.cpp
+        tests/test_command.cpp
 )
 
 add_executable(${PROJECT_NAME}_test

@@ -1,0 +1,21 @@
+x = 25
+width = 50
+WHILE (x < 150) {
+    y = x * 1.45
+    SQUARE x y width
+    x = x + 30
+    width = width * 1.45
+}
+RECTANGLE 448 10 32 448
+
+i = 0
+WHILE (i < 5) {
+    y = 512 - 50 * (i + 1)
+    SQUARE 25 y 25
+    IF (i > 0) {
+        x = 50 * i + 25
+        SQUARE x 462 25
+    }
+
+    i = i + 1
+}

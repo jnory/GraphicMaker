@@ -56,13 +56,6 @@ Immediate BinaryOp::get_value(Environment &env) {
     } else if (this->op_ == "-") {
         return v1 - v2;
     } else if (this->op_ == "<") {
-        if(((NoOp *)s1_)->get_name() == "j") {
-            std::string name = "x";
-            auto x = env.lookup_variable(name);
-            name = "y";
-            auto y = env.lookup_variable(name);
-            std::cerr << x.get<int64_t>() << " " << y.get<int64_t>() << " | " << v1.get<int64_t>() << " " << v2.get<int64_t>() << std::endl;
-        }
         return v1 < v2;
     } else if (this->op_ == ">") {
         return v1 > v2;

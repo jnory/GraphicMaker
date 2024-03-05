@@ -56,109 +56,111 @@ public:
     }
 
     Immediate operator+(Immediate &other) {
-        if (type_ == IM_FLOAT) {
-            auto value = value_.floating + other.get_as_float();
+        if (type_ == IM_FLOAT || other.type_ == IM_FLOAT) {
+            auto value = get_as_float() + other.get_as_float();
             return Immediate(value);
         } else {
             assert(type_ == IM_INTEGER);
-            auto value = value_.integer + other.get_as_integer();
+            assert(other.type_ == IM_INTEGER);
+            auto value = get_as_integer() + other.get_as_integer();
             return Immediate(value);
         }
     }
 
     Immediate operator-(Immediate &other) {
-        if (type_ == IM_FLOAT) {
-            auto value = value_.floating - other.get_as_float();
+        if (type_ == IM_FLOAT || other.type_ == IM_FLOAT) {
+            auto value = get_as_float() - other.get_as_float();
             return Immediate(value);
         } else {
             assert(type_ == IM_INTEGER);
-            auto value = value_.integer - other.get_as_integer();
+            assert(other.type_ == IM_INTEGER);
+            auto value = get_as_integer() - other.get_as_integer();
             return Immediate(value);
         }
     }
 
     Immediate operator*(Immediate &other) {
-        if (type_ == IM_FLOAT) {
-            auto value = value_.floating * other.get_as_float();
+        if (type_ == IM_FLOAT || other.type_ == IM_FLOAT) {
+            auto value = get_as_float() * other.get_as_float();
             return Immediate(value);
         } else {
             assert(type_ == IM_INTEGER);
-            auto value = value_.integer * other.get_as_integer();
+            assert(other.type_ == IM_INTEGER);
+            auto value = get_as_integer() * other.get_as_integer();
             return Immediate(value);
         }
     }
 
     Immediate operator/(Immediate &other) {
-        // TODO: too slow. Introduce //??
-        if (type_ == IM_FLOAT) {
-            auto value = value_.floating / other.get_as_float();
+        if (type_ == IM_FLOAT || other.type_ == IM_FLOAT) {
+            auto value = get_as_float() / other.get_as_float();
             return Immediate(value);
         } else {
             assert(type_ == IM_INTEGER);
-            if (other.type_ == IM_INTEGER) {
-                auto value = value_.integer / other.value_.integer;
-                return Immediate(value);
-            } else {
-                assert(other.type_ == IM_FLOAT);
-                auto value = (double)value_.integer / other.value_.floating;
-                return Immediate(value);
-            }
+            assert(other.type_ == IM_INTEGER);
+            auto value = get_as_integer() / other.get_as_integer();
+            return Immediate(value);
         }
     }
 
     Immediate operator>(Immediate &other) {
-        bool value;
-        if (type_ == IM_FLOAT) {
-            value = value_.floating > other.get_as_float();
+        if (type_ == IM_FLOAT || other.type_ == IM_FLOAT) {
+            auto value = get_as_float() > other.get_as_float();
+            return Immediate(value?1ll:0ll);
         } else {
             assert(type_ == IM_INTEGER);
-            value = value_.integer > other.get_as_integer();
+            assert(other.type_ == IM_INTEGER);
+            auto value = get_as_integer() > other.get_as_integer();
+            return Immediate(value?1ll:0ll);
         }
-        return Immediate(value?1ll:0ll);
     }
 
     Immediate operator<(Immediate &other) {
-        bool value;
-        if (type_ == IM_FLOAT) {
-            value = value_.floating < other.get_as_float();
+        if (type_ == IM_FLOAT || other.type_ == IM_FLOAT) {
+            auto value = get_as_float() < other.get_as_float();
+            return Immediate(value?1ll:0ll);
         } else {
             assert(type_ == IM_INTEGER);
-            value = value_.integer < other.get_as_integer();
+            assert(other.type_ == IM_INTEGER);
+            auto value = get_as_integer() < other.get_as_integer();
+            return Immediate(value?1ll:0ll);
         }
-        return Immediate(value?1ll:0ll);
     }
 
     Immediate operator==(Immediate &other) {
-        bool value;
-        if (type_ == IM_FLOAT) {
-            value = value_.floating == other.get_as_float();
+        if (type_ == IM_FLOAT || other.type_ == IM_FLOAT) {
+            auto value = get_as_float() == other.get_as_float();
+            return Immediate(value?1ll:0ll);
         } else {
             assert(type_ == IM_INTEGER);
-            value = value_.integer == other.get_as_integer();
+            assert(other.type_ == IM_INTEGER);
+            auto value = get_as_integer() == other.get_as_integer();
+            return Immediate(value?1ll:0ll);
         }
-        return Immediate(value?1ll:0ll);
     }
 
     Immediate operator<=(Immediate &other) {
-        bool value;
-        if (type_ == IM_FLOAT) {
-            value = value_.floating <= other.get_as_float();
+        if (type_ == IM_FLOAT || other.type_ == IM_FLOAT) {
+            auto value = get_as_float() <= other.get_as_float();
+            return Immediate(value?1ll:0ll);
         } else {
             assert(type_ == IM_INTEGER);
-            value = value_.integer <= other.get_as_integer();
+            assert(other.type_ == IM_INTEGER);
+            auto value = get_as_integer() <= other.get_as_integer();
+            return Immediate(value?1ll:0ll);
         }
-        return Immediate(value?1ll:0ll);
     }
 
     Immediate operator>=(Immediate &other) {
-        bool value;
-        if (type_ == IM_FLOAT) {
-            value = value_.floating >= other.get_as_float();
+        if (type_ == IM_FLOAT || other.type_ == IM_FLOAT) {
+            auto value = get_as_float() >= other.get_as_float();
+            return Immediate(value?1ll:0ll);
         } else {
             assert(type_ == IM_INTEGER);
-            value = value_.integer >= other.get_as_integer();
+            assert(other.type_ == IM_INTEGER);
+            auto value = get_as_integer() >= other.get_as_integer();
+            return Immediate(value?1ll:0ll);
         }
-        return Immediate(value?1ll:0ll);
     }
 
 private:

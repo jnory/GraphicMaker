@@ -9,10 +9,10 @@ NoOp::NoOp(Token token): token_(std::move(token)){
 }
 
 Immediate NoOp::get_value(Environment &env) {
-    if (this->token_.is_number()) {
-        return Immediate(this->token_.get<int64_t>());
-    } else if (this->token_.is_float()) {
+    if (this->token_.is_float()) {
         return Immediate(this->token_.get<double>());
+    } else if (this->token_.is_number()) {
+        return Immediate(this->token_.get<int64_t>());
     // TODO: implement string
     // } else if (this->token_.is_string()) {
     //    return Immediate(this->token_.get<std::string>());

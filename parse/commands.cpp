@@ -83,11 +83,12 @@ void Block::run(Environment &env) {
 
 void If::run(Environment &env) {
     auto result = this->condition_->get_value(env);
-    // else could be null
-    if (result.get<int>() == 0 && this->else_clause_ != nullptr) {
-        this->else_clause_->run(env);
-    } else {
+    if (result.get<int>() > 0) {
         this->then_clause_->run(env);
+    }
+    // else could be null
+    else if (this->else_clause_ != nullptr) {
+        this->else_clause_->run(env);
     }
 }
 

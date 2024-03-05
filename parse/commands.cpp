@@ -64,6 +64,7 @@ Immediate BinaryOp::get_value(Environment &env) {
     } else if (this->op_ == ">=") {
         return v1 >= v2;
     } else {
+        // TODO: implement !=
         assert(this->op_ == "==");
         return v1 == v2;
     }

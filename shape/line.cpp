@@ -24,8 +24,8 @@ void xiaolin_wus_algorithm_high_angle(
     size_t x = x1;
     if (y2 > y1) {
         for (size_t y = y1; y <= y2; y++) {
-            set_color(file, x, y, color * error);
-            set_color(file, x + 1, y, color * (1 - error));
+            set_color(file, x, y, color * (1 - error));
+            set_color(file, x + 1, y, color * error);
             error += grad;
             if (error > 1) {
                 error -= 1;
@@ -34,8 +34,8 @@ void xiaolin_wus_algorithm_high_angle(
         }
     } else {
         for (size_t y = y1; y >= y2; y--) {
-            set_color(file, x, y, color * error);
-            set_color(file, x + 1, y, color * (1 - error));
+            set_color(file, x, y, color * (1 - error));
+            set_color(file, x + 1, y, color * error);
             error += grad;
             if (error > 1) {
                 error -= 1;
@@ -60,8 +60,8 @@ void xiaolin_wus_algorithm_low_angle(
     double error = 0.0;
     size_t y = y1;
     for (size_t x = x1; x <= x2; x++) {
-        set_color(file, x, y, color * error);
-        set_color(file, x, y + step, color * (1 - error));
+        set_color(file, x, y, color * (1 - error));
+        set_color(file, x, y + step, color * error);
         error += grad;
         if (error > 1) {
             error -= 1;

@@ -11,7 +11,13 @@ struct Color {
     Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a): R(r), G(g), B(b), A(a) {}
 
     Color operator*(double ratio) const {
-        return {(uint8_t) (R * ratio), (uint8_t) (G * ratio), (uint8_t) (B * ratio), A};
+        // 255 - (255 - R) * ratio
+        // 255 - 255*ratio + R*ratio
+        // 255 * (1 - ratio) + R * ratio
+        return {
+            (uint8_t) (255 - 255 * ratio + R * ratio),
+            (uint8_t) (255 - 255 * ratio + G * ratio),
+            (uint8_t) (255 - 255 * ratio + B * ratio), A};
     }
 
     uint8_t R;

@@ -28,24 +28,24 @@ void xiaolin_wus_algorithm_circle(
         // std::cout << "x = " << x << " y = " << y << " sq_error = " << sq_error << " brightness = " << (int)brightness << std::endl;
 
         // low angle
-        set_color_safe(file, center_x + x, 0, center_y + y, 0, brightness, color);
-        set_color_safe(file, center_x + x + 1, 0, center_y + y, 0, 1 - brightness, color);
-        set_color_safe(file, center_x + x, 0, center_y, y, brightness, color);
-        set_color_safe(file, center_x + x + 1, 0, center_y, y, 1 - brightness, color);
-        set_color_safe(file, center_x, x, center_y + y, 0, brightness, color);
-        set_color_safe(file, center_x, x + 1, center_y + y, 0, 1 - brightness, color);
-        set_color_safe(file, center_x, x, center_y, y, brightness, color);
-        set_color_safe(file, center_x, x + 1, center_y, y, 1 - brightness, color);
+        set_color_safe(file, center_x + x, 0, center_y + y, 0, 1 - brightness, color);
+        set_color_safe(file, center_x + x + 1, 0, center_y + y, 0, brightness, color);
+        set_color_safe(file, center_x + x, 0, center_y, y, 1 - brightness, color);
+        set_color_safe(file, center_x + x + 1, 0, center_y, y, brightness, color);
+        set_color_safe(file, center_x, x, center_y + y, 0, 1 - brightness, color);
+        set_color_safe(file, center_x, x + 1, center_y + y, 0, brightness, color);
+        set_color_safe(file, center_x, x, center_y, y, 1 - brightness, color);
+        set_color_safe(file, center_x, x + 1, center_y, y, brightness, color);
 
         // high angle
-        set_color_safe(file, center_x + y, 0, center_y + x, 0, brightness, color);
-        set_color_safe(file, center_x + y, 0, center_y + x + 1, 0, 1 - brightness, color);
-        set_color_safe(file, center_x, y, center_y + x, 0, brightness, color);
-        set_color_safe(file, center_x, y, center_y + x + 1, 0, 1 - brightness, color);
-        set_color_safe(file, center_x + y, 0, center_y, x, brightness, color);
-        set_color_safe(file, center_x + y, 0, center_y, x + 1, 1 - brightness, color);
-        set_color_safe(file, center_x, y, center_y, x, brightness, color);
-        set_color_safe(file, center_x, y, center_y, x + 1, 1 - brightness, color);
+        set_color_safe(file, center_x + y, 0, center_y + x, 0, 1 - brightness, color);
+        set_color_safe(file, center_x + y, 0, center_y + x + 1, 0, brightness, color);
+        set_color_safe(file, center_x, y, center_y + x, 0, 1 - brightness, color);
+        set_color_safe(file, center_x, y, center_y + x + 1, 0, brightness, color);
+        set_color_safe(file, center_x + y, 0, center_y, x, 1 - brightness, color);
+        set_color_safe(file, center_x + y, 0, center_y, x + 1, brightness, color);
+        set_color_safe(file, center_x, y, center_y, x, 1 - brightness, color);
+        set_color_safe(file, center_x, y, center_y, x + 1, brightness, color);
 
         size_t diff = 2 * y + 1;
         if (sq_error < diff) {

@@ -1,0 +1,41 @@
+jmax = 256
+correction = 100
+xmax = 512
+ymax = 512
+x = 0
+WHILE (x < xmax) {
+    r0 = (x * 4.0) / xmax - 2.0
+    y = 0
+    WHILE (y < ymax) {
+        i0 = (y * 4.0) / ymax - 2.0
+        j = 0
+        n = 0
+        r = 0.0
+        i = 0.0
+        WHILE(j < jmax) {
+            IF (n == 0) {
+                r2 = r * r - i * i + r0
+                i2 = 2 * r * i + i0
+                r = r2
+                i = i2
+                IF (r * r + i * i > 4) {
+                    n = j
+                }
+            }
+            j = j + 1
+        }
+
+        IF (n == 0) {
+            POINT x y
+        } ELSE {
+            R = (255.0 * n) / correction
+            G = (255.0 * n) / correction
+            B = (255.0 * (n - correction)) / correction
+            WITH COLOR(R G B) {
+                POINT x y
+            }
+        }
+        y = y + 1
+    }
+    x = x + 1
+}

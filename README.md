@@ -1,6 +1,9 @@
 # これは何？
 
 Cafetalkで開設しているレッスン、「[基礎から応用まで！はじめて学ぶC/C++](https://cafetalk.com/lesson/detail/?c=eJzzKy3PKncLTnTNLLIwC3X1DjI29QkNtLUFAGhYB68.&lang=ja)」の C++ パートで開発するお絵書きアプリです。
+[examples](examples) ディレクトリにあるような簡易言語で記載したコードから画像を生成することができます。
+
+![all_shapes.png](./examples/all_shapes.bmp)
 
 # ビルドインストラクション
 

@@ -20,7 +20,7 @@ void print_help(char **argv) {
 
 Opt parse_args(int argc, char **argv) {
     if (argc == 2) {
-        return Opt{argv[1], "", false};
+        return Opt{argv[1], "", true};
     }
     if (argc != 3) {
         print_help(argv);
@@ -52,6 +52,7 @@ std::string load_code(const std::string &source) {
 int main(int argc, char **argv) {
     auto opt = parse_args(argc, argv);
     if (opt.err) {
+        print_help(argv);
         return -1;
     }
     if (opt.code == "-h" || opt.code == "--help") {
@@ -65,7 +66,10 @@ int main(int argc, char **argv) {
     initialize_bmp_file(&file, 512, 512);
     Environment env(&file);
     block->run(env);
-    save_bmp_file((char *)opt.output.c_str(), &file);
+    auto save_result = save_bmp_file((char *)opt.output.c_str(), &file);
+    if (save_result != 0) {
+        std::cerr << "unexpected error: unable to save to file: code=" << save_result << std::endl;
+    }
 
     return 0;
 }

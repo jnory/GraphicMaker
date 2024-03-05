@@ -100,6 +100,25 @@ void While::run(Environment &env) {
     }
 }
 
+void With::run(Environment &env) {
+    // TODO: implement AFFINE
+    assert(this->with_type_ == "COLOR");
+    Color color = env.get_color();
+
+    size_t n_params = this->parameters_.size();
+    assert(n_params == 3 || n_params == 4);
+    uint8_t R = this->parameters_[0]->get_value(env).get<int64_t>();
+    uint8_t G = this->parameters_[1]->get_value(env).get<int64_t>();
+    uint8_t B = this->parameters_[2]->get_value(env).get<int64_t>();
+    uint8_t A = 255;
+    if (n_params == 4) {
+        A = this->parameters_[3]->get_value(env).get<int64_t>();
+    }
+    env.set_color(Color(R, G, B, A));
+    this->block_->run(env);
+    env.set_color(color);
+}
+
 ShapeDef::ShapeDef(std::string type, const std::vector<NoOp *> &parameters): type_(std::move(type)), parameters_(parameters) {}
 
 void ShapeDef::run(Environment &env) {
@@ -107,6 +126,7 @@ void ShapeDef::run(Environment &env) {
     if (shape == nullptr) {
         throw std::runtime_error("no such type:" + this->type_);
     }
-    shape->draw(env.get_file());
+    DrawingProperty prop(env.get_color());
+    shape->draw(env.get_file(), prop);
     delete shape;
 }

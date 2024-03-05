@@ -7,8 +7,7 @@
 
 #define PI 3.14159265
 
-void set_pixel(BitmapFile *file, size_t x, size_t y, uint8_t brightness);
-void set_color(BitmapFile *file, size_t x, size_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+void set_color(BitmapFile *file, size_t x, size_t y, Color color);
 
 class Point : public Shape {
 public:
@@ -22,7 +21,7 @@ public:
     virtual Shape *translate(int diff_x, int diff_y);
     virtual Shape *scale(double scale);
     virtual Shape *scale(double scale, Point center);
-    virtual void draw(BitmapFile *file);
+    virtual void draw(BitmapFile *file, DrawingProperty &prop);
     virtual void describe(std::ostream *out);
 
     Point copy_translate(int diff_x, int diff_y);

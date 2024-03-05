@@ -57,15 +57,15 @@ Shape *Triangle::scale(double scale, Point center)
     return this;
 }
 
-void Triangle::draw(BitmapFile *file)
+void Triangle::draw(BitmapFile *file, DrawingProperty &prop)
 {
     Line line1(this->p1, this->p2);
     Line line2(this->p2, this->p3);
     Line line3(this->p3, this->p1);
-    
-    line1.draw(file);
-    line2.draw(file);
-    line3.draw(file);
+
+    line1.draw(file, prop);
+    line2.draw(file, prop);
+    line3.draw(file, prop);
 }
 
 void Triangle::describe(std::ostream *out)

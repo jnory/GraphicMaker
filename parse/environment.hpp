@@ -7,6 +7,7 @@
 #include <unordered_map>
 
 #include "../io/bitmap.hpp"
+#include "../shape/shape.hpp"
 
 enum ImmediateType {
     IM_INTEGER,
@@ -195,7 +196,7 @@ private:
 
 class Environment {
 public:
-    explicit Environment(BitmapFile *file): file_(file){}
+    explicit Environment(BitmapFile *file): file_(file), color_(0, 0, 0) {}
 
     BitmapFile *get_file() {
         return this->file_;
@@ -224,8 +225,17 @@ public:
         }
     }
 
+    Color get_color() const {
+        return color_;
+    }
+
+    void set_color(Color color) {
+        color_ = color;
+    }
+
 private:
     BitmapFile *file_;
+    Color color_;
     std::unordered_map<std::string, Immediate> variables_;
 };
 

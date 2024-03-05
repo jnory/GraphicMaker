@@ -52,12 +52,12 @@ Shape *RegularPolygon::scale(double scale, Point center_)
     return this;
 }
 
-void RegularPolygon::draw(BitmapFile *file)
+void RegularPolygon::draw(BitmapFile *file, DrawingProperty &prop)
 {
     for (size_t i = 0; i < this->n; i++) {
         size_t j = (i + 1) % this->n;
         Line line(this->points[i], this->points[j]);
-        line.draw(file);
+        line.draw(file, prop);
     }
 }
 

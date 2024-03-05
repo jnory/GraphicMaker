@@ -1,6 +1,8 @@
 #ifndef COMMANDS_HPP
 #define COMMANDS_HPP
 
+#include <string>
+
 #include "environment.hpp"
 #include "lexer.hpp"
 
@@ -148,6 +150,37 @@ public:
 
 private:
     Statement *condition_;
+    Block *block_;
+};
+
+class With: public Command {
+public:
+    With(std::string with_type, std::vector<NoOp *> parameters, Block *block)
+            : with_type_(std::move(with_type)), parameters_(std::move(parameters)), block_(block){}
+    virtual ~With() {
+        for (auto param: parameters_) {
+            delete param;
+        }
+        delete this->block_;
+    }
+
+    virtual void run(Environment &env);
+
+    virtual std::string to_string() {
+        std::stringstream ss;
+        ss << "[With " << with_type_ << ":";
+        for(auto param: parameters_) {
+            ss << " " << param->to_string();
+        }
+        ss << " (" << std::endl;
+        ss << block_->to_string() << ")";
+        ss << "]";
+        return ss.str();
+    }
+
+private:
+    std::string with_type_;
+    std::vector<NoOp *> parameters_;
     Block *block_;
 };
 

@@ -17,15 +17,15 @@ void swap(size_t *x1, size_t *y1, size_t *x2, size_t *y2){
 
 void xiaolin_wus_algorithm_high_angle(
     BitmapFile *file, size_t x1, size_t y1, size_t y2,
-    size_t diff_x, size_t diff_y
+    size_t diff_x, size_t diff_y, Color color
  ){
     double grad = (double) diff_x / diff_y;
     double error = 0.0;
     size_t x = x1;
     if (y2 > y1) {
         for (size_t y = y1; y <= y2; y++) {
-            set_pixel(file, x, y, (uint8_t)(255 * error));
-            set_pixel(file, x + 1, y, (uint8_t)(255 * (1 - error)));
+            set_color(file, x, y, color * error);
+            set_color(file, x + 1, y, color * (1 - error));
             error += grad;
             if (error > 1) {
                 error -= 1;
@@ -34,8 +34,8 @@ void xiaolin_wus_algorithm_high_angle(
         }
     } else {
         for (size_t y = y1; y >= y2; y--) {
-            set_pixel(file, x, y, (uint8_t)(255 * error));
-            set_pixel(file, x + 1, y, (uint8_t)(255 * (1 - error)));
+            set_color(file, x, y, color * error);
+            set_color(file, x + 1, y, color * (1 - error));
             error += grad;
             if (error > 1) {
                 error -= 1;
@@ -47,7 +47,7 @@ void xiaolin_wus_algorithm_high_angle(
 
 void xiaolin_wus_algorithm_low_angle(
     BitmapFile *file, size_t x1, size_t y1, size_t x2, size_t y2,
-    size_t diff_x, size_t diff_y
+    size_t diff_x, size_t diff_y, Color color
  ){
     int step;
     if (y2 > y1) {
@@ -60,8 +60,8 @@ void xiaolin_wus_algorithm_low_angle(
     double error = 0.0;
     size_t y = y1;
     for (size_t x = x1; x <= x2; x++) {
-        set_pixel(file, x, y, (uint8_t) (255 * error));
-        set_pixel(file, x, y + step, (uint8_t)(255 * (1 - error)));
+        set_color(file, x, y, color * error);
+        set_color(file, x, y + step, color * (1 - error));
         error += grad;
         if (error > 1) {
             error -= 1;
@@ -124,7 +124,7 @@ void Line::describe(std::ostream *out)
     *out << this->p2.x << " " << this->p2.y << std::endl;
 }
 
-void Line::draw(BitmapFile *file)
+void Line::draw(BitmapFile *file, DrawingProperty &prop)
 {
     size_t x1 = this->p1.x;
     size_t y1 = this->p1.y;
@@ -144,8 +144,8 @@ void Line::draw(BitmapFile *file)
     }
 
     if (diff_x < diff_y) {
-        xiaolin_wus_algorithm_high_angle(file, x1, y1, y2, diff_x, diff_y);
+        xiaolin_wus_algorithm_high_angle(file, x1, y1, y2, diff_x, diff_y, prop.color());
     } else {
-        xiaolin_wus_algorithm_low_angle(file, x1, y1, x2, y2, diff_x, diff_y);
+        xiaolin_wus_algorithm_low_angle(file, x1, y1, x2, y2, diff_x, diff_y, prop.color());
     }
 }

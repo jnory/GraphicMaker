@@ -6,7 +6,7 @@
 #include "point.hpp"
 #include "circle.hpp"
 
-void set_pixel_safe(BitmapFile *file, size_t x_pos, size_t x_neg, size_t y_pos, size_t y_neg, uint8_t brightness)
+void set_color_safe(BitmapFile *file, size_t x_pos, size_t x_neg, size_t y_pos, size_t y_neg, double brightness, Color color)
 {
     if (x_pos < x_neg) {
         return;
@@ -14,38 +14,38 @@ void set_pixel_safe(BitmapFile *file, size_t x_pos, size_t x_neg, size_t y_pos, 
     if (y_pos < y_neg) {
         return;
     }
-    set_pixel(file, x_pos - x_neg, y_pos -y_neg, brightness);
+    set_color(file, x_pos - x_neg, y_pos -y_neg, color * brightness);
 }
 
 
 void xiaolin_wus_algorithm_circle(
-    BitmapFile *file, size_t center_x, size_t center_y, size_t r
+    BitmapFile *file, size_t center_x, size_t center_y, size_t r, Color color
  ){
     size_t x = r;
     size_t sq_error = 0;
     for (size_t y = 0; y <= x; y++) {
-        auto brightness = (uint8_t)(255 * ((double)sq_error / (2.0 * (double)r)));
+        auto brightness = (double)sq_error / (2.0 * (double)r);
         // std::cout << "x = " << x << " y = " << y << " sq_error = " << sq_error << " brightness = " << (int)brightness << std::endl;
 
         // low angle
-        set_pixel_safe(file, center_x + x,     0,     center_y + y, 0, brightness);
-        set_pixel_safe(file, center_x + x + 1, 0,     center_y + y, 0, 255 - brightness);
-        set_pixel_safe(file, center_x + x,     0,     center_y,     y, brightness);
-        set_pixel_safe(file, center_x + x + 1, 0,     center_y,     y, 255 - brightness);
-        set_pixel_safe(file, center_x,         x,     center_y + y, 0, brightness);
-        set_pixel_safe(file, center_x,         x + 1, center_y + y, 0, 255 - brightness);
-        set_pixel_safe(file, center_x,         x    , center_y,     y, brightness);
-        set_pixel_safe(file, center_x        , x + 1, center_y,     y, 255 - brightness);
+        set_color_safe(file, center_x + x, 0, center_y + y, 0, brightness, color);
+        set_color_safe(file, center_x + x + 1, 0, center_y + y, 0, 1 - brightness, color);
+        set_color_safe(file, center_x + x, 0, center_y, y, brightness, color);
+        set_color_safe(file, center_x + x + 1, 0, center_y, y, 1 - brightness, color);
+        set_color_safe(file, center_x, x, center_y + y, 0, brightness, color);
+        set_color_safe(file, center_x, x + 1, center_y + y, 0, 1 - brightness, color);
+        set_color_safe(file, center_x, x, center_y, y, brightness, color);
+        set_color_safe(file, center_x, x + 1, center_y, y, 1 - brightness, color);
 
         // high angle
-        set_pixel_safe(file, center_x + y, 0, center_y + x,     0,     brightness);
-        set_pixel_safe(file, center_x + y, 0, center_y + x + 1, 0,     255 - brightness);
-        set_pixel_safe(file, center_x,     y, center_y + x,     0,     brightness);
-        set_pixel_safe(file, center_x,     y, center_y + x + 1, 0,     255 - brightness);
-        set_pixel_safe(file, center_x + y, 0, center_y,         x,     brightness);
-        set_pixel_safe(file, center_x + y, 0, center_y,         x + 1, 255 - brightness);
-        set_pixel_safe(file, center_x,     y, center_y        , x,     brightness);
-        set_pixel_safe(file, center_x,     y, center_y,         x + 1, 255 - brightness);
+        set_color_safe(file, center_x + y, 0, center_y + x, 0, brightness, color);
+        set_color_safe(file, center_x + y, 0, center_y + x + 1, 0, 1 - brightness, color);
+        set_color_safe(file, center_x, y, center_y + x, 0, brightness, color);
+        set_color_safe(file, center_x, y, center_y + x + 1, 0, 1 - brightness, color);
+        set_color_safe(file, center_x + y, 0, center_y, x, brightness, color);
+        set_color_safe(file, center_x + y, 0, center_y, x + 1, 1 - brightness, color);
+        set_color_safe(file, center_x, y, center_y, x, brightness, color);
+        set_color_safe(file, center_x, y, center_y, x + 1, 1 - brightness, color);
 
         size_t diff = 2 * y + 1;
         if (sq_error < diff) {
@@ -95,12 +95,13 @@ void Circle::describe(std::ostream *out)
     *out << this->r_ << std::endl;
 }
 
-void Circle::draw(BitmapFile *file)
+void Circle::draw(BitmapFile *file, DrawingProperty &prop)
 {
     xiaolin_wus_algorithm_circle(
         file,
         this->center_.x,
         this->center_.y,
-        this->r_
+        this->r_,
+        prop.color()
     );
 }

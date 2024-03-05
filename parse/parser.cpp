@@ -54,6 +54,36 @@ While *build_while(TokenIterator &iterator) {
     return new While(condition, loop_clause);
 }
 
+With *build_with(TokenIterator &iterator) {
+    // <WITH> ::= "WITH" <WITH_TYPE> "(" <WITH_PARAMETERS> ")" "{" <BLOCK> "}"
+    // <WITH_TYPE> ::= "COLOR"  // TODO: implement AFFINE
+    // <WITH_PARAMETERS> ::= <NO_OP>+
+
+    assert(!iterator.is_end_of_code());
+
+    auto &with_type = iterator.next();
+    assert(with_type.get<std::string>() == "COLOR");
+    auto &paren = iterator.next();
+    assert(paren.get<std::string>() == "(");
+
+    auto token_ptr = &iterator.next();
+    std::vector<NoOp *> parameters;
+    assert(!token_ptr->is_eos());
+    while(token_ptr->get<std::string>() != ")") {
+        auto no_op = new NoOp(*token_ptr);
+        parameters.push_back(no_op);
+        token_ptr = &iterator.next();
+        assert(!token_ptr->is_eos());
+    }
+
+    bool end_by_closed_paren;
+    auto &open_block = iterator.next();
+    assert(open_block.get<std::string>() == "{");
+    Block *with_clause = build_block(iterator, end_by_closed_paren);
+    assert(end_by_closed_paren);
+    return new With(with_type.get<std::string>(), parameters, with_clause);
+}
+
 ShapeDef *build_shape_def(TokenIterator &iterator) {
     // <SHAPE> ::= <SHAPE_DEF> <EOS>
     // <SHAPE_DEF> ::= <SHAPE_TYPE> <PARAMETERS>
@@ -84,7 +114,7 @@ ShapeDef *build_shape_def(TokenIterator &iterator) {
 }
 
 Command *build_command(TokenIterator &iterator) {
-    // <COMMAND> ::= <IF> | <WHILE> | <SHAPE> | <STATEMENT>
+    // <COMMAND> ::= <IF> | <WHILE> | <SHAPE> | <WITH> | <STATEMENT>
     auto &token = iterator.look_ahead();
     auto str = token.get<std::string>();
     if(str == "IF") {
@@ -93,6 +123,9 @@ Command *build_command(TokenIterator &iterator) {
     } else if (str == "WHILE") {
         iterator.succ();
         return build_while(iterator);
+    } else if (str == "WITH") {
+        iterator.succ();
+        return build_with(iterator);
     } else {
         auto shape = build_shape_def(iterator);
         if (shape != nullptr) {

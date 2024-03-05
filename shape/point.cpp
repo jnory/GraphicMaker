@@ -5,7 +5,7 @@
 #include "point.hpp"
 
 
-void set_pixel(BitmapFile *file, size_t x, size_t y, uint8_t brightness) 
+void set_color(BitmapFile *file, size_t x, size_t y, Color color)
 {
     uint8_t *data = file->data; // 画像データの格納先
     size_t width = file->infoHeader.biWidth; // 横幅
@@ -15,25 +15,10 @@ void set_pixel(BitmapFile *file, size_t x, size_t y, uint8_t brightness)
     }
 
     size_t position = (y * width + x) * 3;
-    data[position] = std::min<uint8_t>(data[position], brightness);
-    data[position + 1] = std::min<uint8_t>(data[position + 1], brightness);
-    data[position + 2] = std::min<uint8_t>(data[position + 2], brightness);
-}
-
-void set_color(BitmapFile *file, size_t x, size_t y, uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-{
-    uint8_t *data = file->data; // 画像データの格納先
-    size_t width = file->infoHeader.biWidth; // 横幅
-    size_t height = file->infoHeader.biHeight; // 高さ
-    if (width < x || height < y) {
-        return;
-    }
-
-    size_t position = (y * width + x) * 3;
-    double ratio = (double) a / 255.0;
-    data[position] = (uint8_t)(data[position] * (1 - ratio) + b * ratio);
-    data[position + 1] = (uint8_t)(data[position + 1] * (1 - ratio) + g * ratio);
-    data[position + 2] = (uint8_t)(data[position + 2] * (1 - ratio) + r * ratio);
+    double ratio = (double) color.A / 255.0;
+    data[position] = (uint8_t)(data[position] * (1 - ratio) + color.B * ratio);
+    data[position + 1] = (uint8_t)(data[position + 1] * (1 - ratio) + color.G * ratio);
+    data[position + 2] = (uint8_t)(data[position + 2] * (1 - ratio) + color.R * ratio);
 }
 
 Point::Point()
@@ -88,9 +73,9 @@ Shape *Point::scale(double scale, Point center)
     return this;
 }
 
-void Point::draw(BitmapFile *file)
+void Point::draw(BitmapFile *file, DrawingProperty &prop)
 {
-    set_pixel(file, this->x, this->y, 0);
+    set_color(file, this->x, this->y, prop.color());
 }
 
 void Point::describe(std::ostream *out)

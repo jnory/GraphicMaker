@@ -16,7 +16,7 @@ public:
     virtual Shape *translate(int diff_x, int diff_y);
     virtual Shape *scale(double scale);
     virtual Shape *scale(double scale, Point center);
-    virtual void draw(BitmapFile *file);
+    virtual void draw(BitmapFile *file, DrawingProperty &prop);
     virtual void describe(std::ostream *out);
 
 private:

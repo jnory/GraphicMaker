@@ -40,7 +40,7 @@ Shape *PngImage::scale(double, Point)
     return this;
 }
 
-void PngImage::draw(BitmapFile *file)
+void PngImage::draw(BitmapFile *file, DrawingProperty &)
 {
     for(size_t x = 0; x < this->width; x++) {
         for(size_t y = 0; y < this->height; y++) {
@@ -51,10 +51,12 @@ void PngImage::draw(BitmapFile *file)
                 file,
                 to_x,
                 to_y,
-                this->data[index],  // R
-                this->data[index + 1],  // G
-                this->data[index + 2],  // B
-                this->data[index + 3]  // A
+                Color(
+                    this->data[index],  // R
+                    this->data[index + 1],  // G
+                    this->data[index + 2],  // B
+                    this->data[index + 3]  // A
+                )
             );
         }
     }

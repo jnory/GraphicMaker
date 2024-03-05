@@ -6,6 +6,31 @@
 
 class Point;
 
+struct Color {
+    Color(uint8_t r, uint8_t g, uint8_t b): R(r), G(g), B(b), A(255) {}
+    Color(uint8_t r, uint8_t g, uint8_t b, uint8_t a): R(r), G(g), B(b), A(a) {}
+
+    Color operator*(double ratio) const {
+        return {(uint8_t) (R * ratio), (uint8_t) (G * ratio), (uint8_t) (B * ratio), A};
+    }
+
+    uint8_t R;
+    uint8_t G;
+    uint8_t B;
+    uint8_t A;
+};
+
+class DrawingProperty {
+public:
+    explicit DrawingProperty(Color color): color_(color) {}
+    Color color() const {
+        return color_;
+    }
+
+private:
+    Color color_;
+};
+
 class Shape {
 public:
     Shape();
@@ -15,7 +40,7 @@ public:
     virtual Shape *translate(int diff_x, int diff_y) = 0;
     virtual Shape *scale(double scale) = 0;
     virtual Shape *scale(double scale, Point center) = 0;
-    virtual void draw(BitmapFile *file) = 0;
+    virtual void draw(BitmapFile *file, DrawingProperty &prop) = 0;
     virtual void describe(std::ostream *out) {
         *out << "Not Implemented" << std::endl;
     }

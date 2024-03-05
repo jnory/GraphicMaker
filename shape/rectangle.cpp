@@ -49,7 +49,7 @@ Shape *Rectangle::scale(double scale, Point center)
     return this;
 }
 
-void Rectangle::draw(BitmapFile *file)
+void Rectangle::draw(BitmapFile *file, DrawingProperty &prop)
 {
     Point right_bottom = this->left_bottom.copy_translate((int)this->width, 0);
     Point left_top = this->left_bottom.copy_translate(0, (int)this->height);
@@ -59,11 +59,11 @@ void Rectangle::draw(BitmapFile *file)
     Line top(left_top,     right_top);
     Line right(right_top,    right_bottom);
     Line bottom(right_bottom, this->left_bottom);
-    
-    left.draw(file);
-    top.draw(file);
-    right.draw(file);
-    bottom.draw(file);
+
+    left.draw(file, prop);
+    top.draw(file, prop);
+    right.draw(file, prop);
+    bottom.draw(file, prop);
 }
 
 void Rectangle::describe(std::ostream *out)

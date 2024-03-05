@@ -34,6 +34,18 @@ TEST(ParserTest, test_parse_while){
             "- (= i (+ i 1))\n"
             ")]\n"
     );
+
+}
+TEST(ParserTest, test_parse_with_color){
+    std::string code = "WITH COLOR(1 2 3){\nPOINT 100 200\n}";
+    Block *block = parse(code);
+    auto actual = block->to_string();
+    EXPECT_EQ(
+            actual,
+            "- [With COLOR: 1 2 3 (\n"
+            "- [Shape POINT 100 200]\n"
+            ")]\n"
+    );
 }
 
 TEST(ParserTest, test_parse_if){

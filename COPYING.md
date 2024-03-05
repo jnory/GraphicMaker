@@ -9,6 +9,7 @@ Exceptions: The following files are licensed under wxWindows Library Licence, Ve
 * CMakeLists.txt
 
 These are based on sample programs from wxWidgets project.
+For details, please see [licence.wxwidgets.txt](docs/licence.wxwidgets.txt).
 
 ## Original Copyrights of derived files from other external OSS
 

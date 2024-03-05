@@ -29,8 +29,8 @@ WHILE (x < xmax) {
             POINT x y
         } ELSE {
             R = (255.0 * n) / correction
-            G = (255.0 * n) / correction
-            B = (255.0 * (n - correction)) / correction
+            G = (255.0 * r * r) / correction
+            B = (255.0 * i * i) / correction
             WITH COLOR(R G B) {
                 POINT x y
             }

@@ -1,4 +1,21 @@
-# modified from wxWidgets sample. See COPYING.md for details
+#############################################################################
+# Original Filename:        samples/minimal/CMakeLists.txt
+# New Filename:             CMakeLists.txt
+# Purpose of Original File: Sample CMake file to show usage of cmake for wxWidgets users
+# Original Author:          Tobias Taschner
+# Modified by:              Jun-ya Norimatsu
+# Created:                  Original creation date: 2016-10-23, Modified creation date: 2023-12-19
+# Copyright:                (c) 2016 wxWidgets development team
+#                           (c) Jun-ya Norimatsu
+# Licence:                  wxWindows Library Licence, Version 3.1, modifications are subject to the same license
+#############################################################################
+
+# Additional Note by Modifier:
+# This code is based on a sample program of wxWidgets project.
+# The original program was designed to demonstrate the minimal usage of the library,
+# and has been significantly modified for this project.
+# Despite extensive changes, this file is distributed under the same wxWindows Library Licence, Version 3.1, as the original, in recognition of Tobias Taschner's contribution.
+
 
 # Declare the minimum required CMake version
 cmake_minimum_required(VERSION 3.26)

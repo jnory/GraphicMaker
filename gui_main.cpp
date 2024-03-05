@@ -1,4 +1,20 @@
-// modified from wxWidgets sample. See COPYING.md for details
+/////////////////////////////////////////////////////////////////////////////
+// Original Filename:        minimal.cpp
+// New Filename:             gui_main.cpp
+// Purpose of Original File: Minimal wxWidgets sample
+// Original Author:          Julian Smart
+// Modified by:              Jun-ya Norimatsu
+// Created:                  Original creation date: 04/01/98, Modified creation date: 12/19/2023
+// Copyright:                (c) Julian Smart
+//                           (c) Jun-ya Norimatsu
+// Licence:                  wxWindows Library Licence, Version 3.1, modifications are subject to the same license
+/////////////////////////////////////////////////////////////////////////////
+
+// Additional Note by Modifier:
+// This code is based on a sample program of wxWidgets project.
+// The original program was designed to demonstrate the minimal usage of the library,
+// and has been significantly modified for this project.
+// Despite extensive changes, this file is distributed under the same wxWindows Library Licence, Version 3.1, as the original, in recognition of Julian Smart's contribution.
 
 #include "wx/wxprec.h"
 #include "wx/wfstream.h"

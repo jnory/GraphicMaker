@@ -79,12 +79,12 @@ void pop(std::vector<TokenOrStatement> &stack) {
 
 void reduce(std::vector<TokenOrStatement> &stack) {
     assert(stack.size() >= 4);
-    auto &s2 = stack.back();
+    auto s2 = stack.back();
     stack.pop_back();
-    auto &op_token = stack.back();
+    auto op_token = stack.back();
     assert(op_token.token != nullptr);
     stack.pop_back();
-    auto &s1 = stack.back();
+    auto s1 = stack.back();
     stack.pop_back();
 
     auto op = op_token.token->get<std::string>();

@@ -26,7 +26,9 @@ public:
 class NoOp: public Statement {
 public:
     explicit NoOp(Token token);
-    virtual ~NoOp() = default;
+    virtual ~NoOp() {
+        delete immediate_;
+    };
 
     virtual void run(Environment &env);
     virtual Immediate get_value(Environment &env);
@@ -41,6 +43,7 @@ public:
 
 private:
     const Token token_;
+    Immediate *immediate_;
 };
 
 // TODO: implement

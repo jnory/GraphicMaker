@@ -5,17 +5,20 @@
 #include "commands.hpp"
 #include "shape_def.hpp"
 
-NoOp::NoOp(Token token): token_(std::move(token)){
-}
-
-Immediate NoOp::get_value(Environment &env) {
+NoOp::NoOp(Token token): token_(std::move(token)), immediate_(nullptr){
     if (this->token_.is_float()) {
-        return Immediate(this->token_.get<double>());
+        this->immediate_ = new Immediate(this->token_.get<double>());
     } else if (this->token_.is_number()) {
-        return Immediate(this->token_.get<int64_t>());
+        this->immediate_ = new Immediate(this->token_.get<int64_t>());
     // TODO: implement string
     // } else if (this->token_.is_string()) {
     //    return Immediate(this->token_.get<std::string>());
+    }
+}
+
+Immediate NoOp::get_value(Environment &env) {
+    if (this->is_immediate()) {
+        return *this->immediate_;
     } else {
         std::string token_str = this->token_.get<std::string>();
         char first_letter = token_str[0];
@@ -29,7 +32,7 @@ void NoOp::run(Environment &env) {
 }
 
 bool NoOp::is_immediate() const {
-    return this->token_.is_number() || this->token_.is_string();
+    return this->immediate_ != nullptr;
 }
 
 
